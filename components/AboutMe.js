@@ -12,7 +12,7 @@ function AboutMe(id){
         <div className={styles.image}>
         <Image
           src="/profile.png"
-          width={'200%'}
+          width={'150%'}
           height={'300%'}
           alt="Picture of the author"
           style={imageStyle}
