@@ -28,3 +28,18 @@
   display: flex;
   align-items: center;
 }
+@media only screen and (max-width: 768px) {
+  .container_text_image {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .Info_pation {
+    width: 100%; 
+    text-align: start;
+  }
+
+  .image {
+    margin-top: 20px; 
+  }
+}
