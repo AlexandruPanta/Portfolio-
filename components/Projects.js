@@ -383,7 +383,7 @@ function Projects(id) {
                   />
                 </span>
               </Link>
-              <Link href='https://github.com/AlexandruPanta/MyMoviz'>
+              <Link href='https://github.com/AlexandruPanta/WeatherApp'>
                 <span className={styles.link}>github
                 <Image
                     src="/github.png"
