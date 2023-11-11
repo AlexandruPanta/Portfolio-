@@ -143,7 +143,7 @@ function Projects(id) {
                 </div>
               </div>
               <div className={styles.link_container}>
-              <Link href='https://morning-news-frontend-3ydpgcqdq-alexandrupanta.vercel.app/'>
+              <Link href='https://morning-news-frontend-two.vercel.app/'>
                 <span className={styles.link}>Demo
                 <Image
                     src="/internet.png"
