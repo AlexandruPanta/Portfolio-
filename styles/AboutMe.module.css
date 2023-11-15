@@ -19,27 +19,10 @@
   color: #0A2472;
   font-family: 'Agbalumo-Regular';
 }
-.container_text_image{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-.image{
-  display: flex;
-  align-items: center;
-}
-@media only screen and (max-width: 768px) {
-  .container_text_image {
-    flex-direction: column;
-    align-items: center;
-  }
 
+@media only screen and (max-width: 768px) {
   .Info_pation {
     width: 100%; 
     text-align: start;
-  }
-
-  .image {
-    margin-top: 20px; 
   }
 }
