@@ -21,21 +21,6 @@ function Contact() {
           </h3>
         </div>
         <p style={{ ...contactStyle, marginBottom: '10px' }}>
-          By phone at{' '}
-          <a style={linkStyle} href="tel:+33763077798">
-            07 63 07 77 98
-          </a>
-        </p>
-        <p style={{ ...contactStyle, marginBottom: '10px' }}>
-          Via{' '}
-          <a
-            style={linkStyle}
-            href="mailto:alexandru.panta2003@gmail.com?subject=Contact from Alexandru Panta Portfolio"
-          >
-            email
-          </a>
-        </p>
-        <p style={{ ...contactStyle, marginBottom: '10px' }}>
           Connect on{' '}
           <a
             style={linkStyle}
