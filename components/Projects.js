@@ -11,73 +11,79 @@ function Projects(id) {
   return (
     <div className={styles.Projects} id='section2'>
       <h1 className={styles.Title}>Projects</h1>
-    <div className={styles.container_text_image}>
-      <div className={styles.container_project}>
-        <div className={styles.textLink}>
-              <video className={styles.video} controls>
-                <source src='/Ecna.mp4' />
-              </video>
-          <div className={styles.textInfo}>
-            <p className={styles.textStyle}>
-            ECNA is a mobile application related to the medical transportation sector, primarily intended for private ambulance companies. 
-            Its main purpose is to provide real-time internal tracking of activities, including past, ongoing, and future assignments. 
-            Additionally, it aims to offer significant time savings and a comfortable support experience for all platform users 🚑
-            </p>
-            <div className={styles.image_lang}>
-              <div className={styles.imageContainer}>
-                <Image
-                  src="/node.png"
-                  width={'100%'}
-                  height={'100%'}
-                  alt="node.js"
-                  style={imageStyle}
-                />
+      <div className={styles.container_text_image}>
+        <div className={styles.container_project}>
+          <div className={styles.textLink}>
+            <video className={styles.video} controls>
+              <source src='/Ecna.mp4' />
+            </video>
+            <div className={styles.textInfo}>
+              <p className={styles.textStyle}>
+                <strong>ECNA</strong> is a cutting-edge mobile solution revolutionizing medical transportation management.
+                Built for private ambulance companies, this comprehensive platform delivers real-time tracking and seamless coordination.
+                <br /><br />
+                <strong>Key Features:</strong>
+                <br />• Real-time assignment tracking (past, ongoing, future)
+                <br />• Intuitive dashboard for fleet management
+                <br />• Significant time savings through automated workflows
+                <br />• Enhanced user experience for all stakeholders
+                <br /><br />
+                Developed with a modern tech stack including React Native for cross-platform mobile excellence, Node.js and Express for robust backend services, and MongoDB for scalable data management.
+              </p>
+              <div className={styles.image_lang}>
+                <div className={styles.imageContainer}>
+                  <Image
+                    src="/node.png"
+                    width={50}
+                    height={50}
+                    alt="node.js"
+                    style={imageStyle}
+                  />
+                </div>
+                <div className={styles.imageContainer}>
+                  <Image
+                    src="/ex.png"
+                    width={50}
+                    height={50}
+                    alt="express.js"
+                    style={imageStyle}
+                  />
+                </div>
+                <div className={styles.imageContainer}>
+                  <Image
+                    src="/mongodb.png"
+                    width={45}
+                    height={45}
+                    alt="mongoDB"
+                    style={imageStyle}
+                  />
+                </div>
+                <div className={styles.imageContainer_reactNative}>
+                  <Image
+                    src="/react-native.png"
+                    width={60}
+                    height={60}
+                    alt="react-native"
+                  />
+                </div>
               </div>
-              <div className={styles.imageContainer}>
-                <Image
-                  src="/ex.png"
-                  width={'100%'}
-                  height={'100%'}
-                  alt="express.js"
-                  style={imageStyle}
-                />
-              </div>
-              <div className={styles.imageContainer}>
-                <Image
-                  src="/mongodb.png"
-                  width={'100%'}
-                  height={'100%'}
-                  alt="mongoDB"
-                  style={imageStyle}
-                />
-              </div>
-              <div className={styles.imageContainer_reactNative}>
-                <Image
-                  src="/react-native.png"
-                  width={'135%'}
-                  height={'150%'}
-                  alt="react-native"
-      
-                />
+              <div className={styles.link_container}>
+                <Link href='https://github.com/AlexandruPanta/Ecna.git'>
+                  <span className={styles.link}>github
+                    <Image
+                      src="/github.png"
+                      width={20}
+                      height={20}
+                      alt="github"
+                      style={imageStyle}
+                    />
+                  </span>
+                </Link>
               </div>
             </div>
-          <div className={styles.link_container}>
-          <Link href='https://github.com/AlexandruPanta/Ecna.git'>
-            <span className={styles.link}>github
-              <Image
-                src="/github.png"
-                width={'20%'}
-                height={'20%'}
-                alt="github"
-                style={imageStyle}
-              />
-            </span>
-          </Link>
-        </div>
           </div>
         </div>
       </div>
-    </div>
       <div className={styles.container_text_image}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
@@ -90,17 +96,23 @@ function Projects(id) {
             />
             <div className={styles.textInfo}>
               <p className={styles.textStyle}>
-              Morning News redefines how you consume the news. With top-tier security (bcrypt and uid2) 
-              for registration and login, your data is safeguarded.
-              Customize your news feed effortlessly - bookmark articles you love, hide unwanted ones with 
-              the eye slash icon, and revisit them with a single click. Your bookmarked articles are neatly stored on your personal bookmarks page.
-              Morning News: Secure. Personalized. Informative  📰</p>
+                <strong>Morning News</strong> - Your personalized news experience redefined. Stay informed with the latest headlines while maintaining complete control over your feed.
+                <br /><br />
+                <strong>Standout Features:</strong>
+                <br />• Enterprise-grade security with bcrypt & uid2 encryption
+                <br />• Smart bookmarking system for favorite articles
+                <br />• Intelligent content filtering with hide/show functionality
+                <br />• Personalized feed management
+                <br />• Dedicated bookmarks page for quick access
+                <br /><br />
+                Built with the powerful MERN stack (MongoDB, Express, React, Next.js) ensuring fast performance and seamless user experience.
+              </p>
               <div className={styles.image_lang}>
                 <div className={styles.imageContainer}>
                   <Image
                     src="/node.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="Node.js"
                     style={imageStyle}
                   />
@@ -108,8 +120,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/ex.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="Express.js"
                     style={imageStyle}
                   />
@@ -117,8 +129,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/mongodb.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={45}
+                    height={45}
                     alt="MongoDB"
                     style={imageStyle}
                   />
@@ -126,8 +138,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/react.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={45}
+                    height={45}
                     alt="React"
                     style={imageStyle}
                   />
@@ -135,36 +147,36 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/next.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={45}
+                    height={45}
                     alt="Next.js"
                     style={imageStyle}
                   />
                 </div>
               </div>
               <div className={styles.link_container}>
-              <Link href='https://morning-news-frontend-two.vercel.app/'>
-                <span className={styles.link}>Demo
-                <Image
-                    src="/internet.png"
-                    width={'20%'}
-                    height={'20%'}
-                    alt="internet"
-                    style={imageStyle}
-                  />
-                </span>
-              </Link>
-              <Link href='https://github.com/AlexandruPanta/MorningNews'>
-                <span className={styles.link}>github
-                <Image
-                    src="/github.png"
-                    width={'20%'}
-                    height={'20%'}
-                    alt="github"
-                    style={imageStyle}
-                  />
+                <Link href='https://morning-news-frontend-two.vercel.app/'>
+                  <span className={styles.link}>Demo
+                    <Image
+                      src="/internet.png"
+                      width={20}
+                      height={20}
+                      alt="internet"
+                      style={imageStyle}
+                    />
                   </span>
-              </Link>
+                </Link>
+                <Link href='https://github.com/AlexandruPanta/MorningNews'>
+                  <span className={styles.link}>github
+                    <Image
+                      src="/github.png"
+                      width={20}
+                      height={20}
+                      alt="github"
+                      style={imageStyle}
+                    />
+                  </span>
+                </Link>
               </div>
             </div>
           </div>
@@ -182,14 +194,23 @@ function Projects(id) {
             />
             <div className={styles.textInfo}>
               <p className={styles.textStyle}>
-                MyMoviz is a user-friendly platform for movie lovers, featuring the latest releases with engaging posters and brief descriptions. It stands out with its interactive features, allowing users to like movies, score them, and dynamically update their preferences. Explore cinema with MyMoviz! 🎬
+                <strong>MyMoviz</strong> - An interactive cinema discovery platform that brings the magic of movies to your fingertips.
+                <br /><br />
+                <strong>Features That Shine:</strong>
+                <br />• Latest movie releases with stunning visuals
+                <br />• Dynamic like and rating system
+                <br />• Real-time preference updates
+                <br />• Comprehensive movie information
+                <br />• Engaging user interface
+                <br /><br />
+                Powered by Next.js and React for lightning-fast performance, with a robust Node.js/Express backend and MongoDB database ensuring smooth data flow and instant updates.
               </p>
               <div className={styles.image_lang}>
                 <div className={styles.imageContainer}>
                   <Image
                     src="/node.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="Node.js"
                     style={imageStyle}
                   />
@@ -197,8 +218,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/ex.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="Express.js"
                     style={imageStyle}
                   />
@@ -206,8 +227,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/mongodb.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={45}
+                    height={45}
                     alt="MongoDB"
                     style={imageStyle}
                   />
@@ -215,8 +236,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/react.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={45}
+                    height={45}
                     alt="React"
                     style={imageStyle}
                   />
@@ -224,36 +245,36 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/next.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={45}
+                    height={45}
                     alt="Next.js"
                     style={imageStyle}
                   />
                 </div>
               </div>
               <div className={styles.link_container}>
-              <Link href='https://mymoviz-frontend-jb221w3qs-alexandrupanta.vercel.app/'>
-                <span className={styles.link}>Demo
-                <Image
-                    src="/internet.png"
-                    width={'20%'}
-                    height={'20%'}
-                    alt="internet"
-                    style={imageStyle}
-                  />
-                </span>
-              </Link>
-              <Link href='https://github.com/AlexandruPanta/MyMoviz'>
-                <span className={styles.link}>github
-                <Image
-                    src="/github.png"
-                    width={'20%'}
-                    height={'20%'}
-                    alt="github"
-                    style={imageStyle}
-                  />
+                <Link href='https://mymoviz-frontend-jb221w3qs-alexandrupanta.vercel.app/'>
+                  <span className={styles.link}>Demo
+                    <Image
+                      src="/internet.png"
+                      width={20}
+                      height={20}
+                      alt="internet"
+                      style={imageStyle}
+                    />
                   </span>
-              </Link>
+                </Link>
+                <Link href='https://github.com/AlexandruPanta/MyMoviz'>
+                  <span className={styles.link}>github
+                    <Image
+                      src="/github.png"
+                      width={20}
+                      height={20}
+                      alt="github"
+                      style={imageStyle}
+                    />
+                  </span>
+                </Link>
               </div>
             </div>
           </div>
@@ -263,28 +284,34 @@ function Projects(id) {
       <div className={styles.container_text_image}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
-                <video className={styles.video} controls>
-                  <source src='/Movie-directory.mp4' />
-                </video>
+            <video className={styles.video} controls>
+              <source src='/Movie-directory.mp4' />
+            </video>
             <div className={styles.textInfo}>
               <p className={styles.textStyle}>
-              Welcome to the Movie Directory project! This is a comprehensive directory that provides detailed information about a
-               wide range of movies. 
-              It's designed with a user-friendly interface and robust functionality to enhance your movie exploration experience 🍿
+                <strong>Movie Directory</strong> - A comprehensive film database that puts the world of cinema at your fingertips.
+                <br /><br />
+                <strong>Highlights:</strong>
+                <br />• Extensive movie database with detailed information
+                <br />• User-friendly search and browse functionality
+                <br />• Clean, intuitive interface design
+                <br />• Fast and efficient data retrieval
+                <br /><br />
+                Built with Flask (Python) for powerful backend operations, MySQL for reliable data storage, and classic HTML/CSS for a responsive, accessible interface.
               </p>
               <div className={styles.image_lang}>
-                  <Image
-                    src="/flask.png"
-                    width={'56%'}
-                    height={'56%'}
-                    alt="flask"
-                    style={imageStyle}
-                  />
+                <Image
+                  src="/flask.png"
+                  width={50}
+                  height={50}
+                  alt="flask"
+                  style={imageStyle}
+                />
                 <div className={styles.imageContainer}>
                   <Image
                     src="/mysql.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="mysql"
                     style={imageStyle}
                   />
@@ -292,8 +319,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/html.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="html"
                     style={imageStyle}
                   />
@@ -301,26 +328,26 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/css.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="css"
                     style={imageStyle}
                   />
                 </div>
               </div>
-            <div className={styles.link_container}>
-            <Link href='https://github.com/AlexandruPanta/Movie-Directory'>
-              <span className={styles.link}>github
-                <Image
-                  src="/github.png"
-                  width={'20%'}
-                  height={'20%'}
-                  alt="github"
-                  style={imageStyle}
-                />
-              </span>
-            </Link>
-          </div>
+              <div className={styles.link_container}>
+                <Link href='https://github.com/AlexandruPanta/Movie-Directory'>
+                  <span className={styles.link}>github
+                    <Image
+                      src="/github.png"
+                      width={20}
+                      height={20}
+                      alt="github"
+                      style={imageStyle}
+                    />
+                  </span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -338,16 +365,24 @@ function Projects(id) {
             />
             <div className={styles.textInfo}>
               <p className={styles.textStyle}>
-              WeatherApp is your modern weather app, offering real-time updates. Find the essentials at a glance:
-               city name, weather description, and temperature range.
-                Use the top search bar to explore more cities and enjoy a personalized experience by logging in or registering.
-                Customize your city list effortlessly with the delete feature. Stay informed, your way  🌦️🌍 </p>
+                <strong>WeatherApp</strong> - Your personal weather companion delivering accurate forecasts with style.
+                <br /><br />
+                <strong>Core Features:</strong>
+                <br />• Real-time weather updates for any city
+                <br />• Detailed temperature ranges and conditions
+                <br />• Smart city management system
+                <br />• User authentication for personalized experience
+                <br />• Custom city lists with quick delete functionality
+                <br />• Intuitive search interface
+                <br /><br />
+                Crafted with vanilla JavaScript for optimal performance, styled with modern CSS, and built on a solid HTML foundation for maximum compatibility.
+              </p>
               <div className={styles.image_lang}>
                 <div className={styles.imageContainer}>
                   <Image
                     src="/javascript.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="javascipt"
                     style={imageStyle}
                   />
@@ -355,8 +390,8 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/css.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="Css"
                     style={imageStyle}
                   />
@@ -364,36 +399,36 @@ function Projects(id) {
                 <div className={styles.imageContainer}>
                   <Image
                     src="/html.png"
-                    width={'100%'}
-                    height={'100%'}
+                    width={50}
+                    height={50}
                     alt="html"
                     style={imageStyle}
                   />
                 </div>
               </div>
               <div className={styles.link_container}>
-              <Link href='https://weather-app-frontend-coral.vercel.app/'>
-                <span className={styles.link}>Demo
-                <Image
-                    src="/internet.png"
-                    width={'20%'}
-                    height={'20%'}
-                    alt="internet"
-                    style={imageStyle}
-                  />
-                </span>
-              </Link>
-              <Link href='https://github.com/AlexandruPanta/WeatherApp'>
-                <span className={styles.link}>github
-                <Image
-                    src="/github.png"
-                    width={'20%'}
-                    height={'20%'}
-                    alt="github"
-                    style={imageStyle}
-                  />
+                <Link href='https://weather-app-frontend-coral.vercel.app/'>
+                  <span className={styles.link}>Demo
+                    <Image
+                      src="/internet.png"
+                      width={20}
+                      height={20}
+                      alt="internet"
+                      style={imageStyle}
+                    />
                   </span>
-              </Link>
+                </Link>
+                <Link href='https://github.com/AlexandruPanta/WeatherApp'>
+                  <span className={styles.link}>github
+                    <Image
+                      src="/github.png"
+                      width={20}
+                      height={20}
+                      alt="github"
+                      style={imageStyle}
+                    />
+                  </span>
+                </Link>
               </div>
             </div>
           </div>
