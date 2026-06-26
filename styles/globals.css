@@ -1,27 +1,15 @@
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 25%, #60a5fa 50%, #2563eb 75%, #1d4ed8 100%);
-  background-attachment: fixed;
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  overflow-x: hidden;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
+:root {
+  --bg-0: #04050d;
+  --bg-1: #0a0e27;
+  --cyan: #22d3ee;
+  --blue: #3b82f6;
+  --violet: #8b5cf6;
+  --magenta: #d946ef;
+  --text: #e7ecff;
+  --text-dim: rgba(231, 236, 255, 0.68);
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
 }
 
 * {
@@ -32,7 +20,93 @@ html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background-color: var(--bg-0);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59, 130, 246, 0.28), transparent 60%),
+    radial-gradient(ellipse 55% 50% at 85% 15%, rgba(139, 92, 246, 0.22), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 8% 88%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 92% 100%, rgba(217, 70, 239, 0.14), transparent 60%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Animated nebula glow */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.20), transparent 42%),
+    radial-gradient(circle at 72% 62%, rgba(34, 211, 238, 0.14), transparent 42%);
+  filter: blur(48px);
+  animation: nebula 26s ease-in-out infinite alternate;
+}
+
+@keyframes nebula {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-3%, 2.5%, 0) scale(1.12); }
+}
+
+/* Faint mission-control grid */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 38%, #000 25%, transparent 82%);
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 38%, #000 25%, transparent 82%);
+  pointer-events: none;
+}
+
+/* Scroll-reveal (driven by IntersectionObserver in _app) */
+.revealOnScroll {
+  opacity: 0;
+  transform: translateY(42px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.revealOnScroll.isVisible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revealOnScroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  body::before { animation: none; }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--blue), var(--violet));
+  border-radius: 10px;
+  border: 2px solid var(--bg-0);
+}
+
 ::selection {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(34, 211, 238, 0.3);
   color: #fff;
 }
