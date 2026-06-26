@@ -8,6 +8,44 @@
     z-index: 1;
 }
 
+.toolbox {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 900px;
+    width: 100%;
+    margin: 50px auto 0;
+}
+
+.toolGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 16px 24px;
+    transition: all 0.3s ease;
+}
+
+.toolGroup:hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: translateY(-3px);
+}
+
+.toolLabel {
+    color: #fff;
+    font-family: 'Agbalumo-Regular';
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toolItems {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

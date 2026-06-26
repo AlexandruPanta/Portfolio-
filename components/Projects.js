@@ -11,6 +11,47 @@ function Projects(id) {
   return (
     <div className={styles.Projects} id='section2'>
       <h1 className={styles.Title}>Projects</h1>
+
+      <div className={styles.container_text_image}>
+        <div className={styles.container_project}>
+          <div className={styles.textLink}>
+            <div className={styles.posterCard}>
+              <span className={styles.posterEmoji}>🏥</span>
+              <span className={styles.posterTitle}>Zoe Care</span>
+              <span className={styles.posterTag}>IoT fall-detection · deployed in 2 EHPAD</span>
+            </div>
+            <div className={styles.textInfo}>
+              <p className={styles.textStyle}>
+                <strong>Zoe Care</strong> is an end-to-end IoT system for fall and presence detection in nursing homes, running in production in 2 EHPAD. <em>(professional project @ SATT Paris-Saclay)</em>
+                <br /><br />
+                <strong>What I built:</strong>
+                <br />• ESP32 sensors with multi-room, per-zone detection for caregivers
+                <br />• Real-time Flutter mobile apps (Zoe Fall, Zoe Fit)
+                <br />• Secure OTA updates — SHA-256 signing + automatic rollback (SSI compliance)
+                <br />• Firebase → Supabase migration with Row-Level Security
+                <br />• OVH production infra: Nginx, SSL/TLS, systemd, WireGuard VPN
+                <br />• Twilio multichannel alerts (call, WhatsApp, deeplink) + React/Metabase dashboards
+                <br /><br />
+                A full stack from embedded firmware to cloud, data pipeline and mobile — built for real-world reliability and security.
+              </p>
+              <div className={styles.badges}>
+                <span className={styles.badge}>ESP32</span>
+                <span className={styles.badge}>Raspberry Pi</span>
+                <span className={styles.badge}>Flutter</span>
+                <span className={styles.badge}>Supabase</span>
+                <span className={styles.badge}>Node.js</span>
+                <span className={styles.badge}>Docker</span>
+                <span className={styles.badge}>OVH / Nginx</span>
+                <span className={styles.badge}>WireGuard</span>
+              </div>
+              <div className={styles.link_container}>
+                <span className={styles.note}>🔒 Proprietary — professional project</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.container_text_image}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
