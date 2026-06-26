@@ -146,6 +146,76 @@
   justify-content: space-around;
 }
 
+.posterCard {
+  width: 500px;
+  height: 300px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.posterCard:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.posterEmoji {
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.posterTitle {
+  font-family: 'Agbalumo-Regular';
+  color: #fff;
+  font-size: 2.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.posterTag {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  margin-left: 30px;
+}
+
+.badge {
+  color: #fff;
+  font-family: 'Agbalumo-Regular';
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.note {
+  display: flex;
+  margin-top: 20px;
+  color: #fff;
+  font-family: 'Agbalumo-Regular';
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: fit-content;
+}
+
 .video {
   width: 500px;
   height: 300px;
@@ -232,6 +302,23 @@
     width: 100%;
     max-width: 500px;
     height: auto;
+  }
+
+  .posterCard {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    min-height: 220px;
+    padding: 2rem 0;
+  }
+
+  .posterTitle {
+    font-size: 2rem;
+  }
+
+  .badges {
+    margin-left: 0;
+    justify-content: center;
   }
 
   .link_container {
