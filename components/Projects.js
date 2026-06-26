@@ -12,7 +12,7 @@ function Projects(id) {
     <div className={styles.Projects} id='section2'>
       <h1 className={styles.Title}>Projects</h1>
 
-      <div className={styles.container_text_image}>
+      <div className={`${styles.container_text_image} revealOnScroll`}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
             <div className={styles.posterCard}>
@@ -52,7 +52,7 @@ function Projects(id) {
         </div>
       </div>
 
-      <div className={styles.container_text_image}>
+      <div className={`${styles.container_text_image} revealOnScroll`}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
             <video className={styles.video} controls>
@@ -125,7 +125,7 @@ function Projects(id) {
           </div>
         </div>
       </div>
-      <div className={styles.container_text_image}>
+      <div className={`${styles.container_text_image} revealOnScroll`}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
             <Image
@@ -223,7 +223,7 @@ function Projects(id) {
           </div>
         </div>
       </div>
-      <div className={styles.container_text_image}>
+      <div className={`${styles.container_text_image} revealOnScroll`}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
             <Image
@@ -322,7 +322,7 @@ function Projects(id) {
         </div>
       </div>
 
-      <div className={styles.container_text_image}>
+      <div className={`${styles.container_text_image} revealOnScroll`}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
             <video className={styles.video} controls>
@@ -394,7 +394,7 @@ function Projects(id) {
         </div>
       </div>
 
-      <div className={styles.container_text_image}>
+      <div className={`${styles.container_text_image} revealOnScroll`}>
         <div className={styles.container_project}>
           <div className={styles.textLink}>
             <Image

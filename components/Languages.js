@@ -139,27 +139,27 @@ function Languages(id) {
       </div>
 
       <div className={styles.toolbox}>
-        <div className={styles.toolGroup}>
+        <div className={`${styles.toolGroup} revealOnScroll`}>
           <span className={styles.toolLabel}>Systems &amp; Infra</span>
           <span className={styles.toolItems}>Docker · Linux · Nginx · systemd · CI/CD · OVH</span>
         </div>
-        <div className={styles.toolGroup}>
+        <div className={`${styles.toolGroup} revealOnScroll`}>
           <span className={styles.toolLabel}>IoT &amp; Embedded</span>
           <span className={styles.toolItems}>ESP32 · Raspberry Pi · TCP/UDP · OTA updates · ThingsBoard</span>
         </div>
-        <div className={styles.toolGroup}>
+        <div className={`${styles.toolGroup} revealOnScroll`}>
           <span className={styles.toolLabel}>Security</span>
           <span className={styles.toolItems}>SHA-256 signing · OTA rollback · Row-Level Security · WireGuard VPN · SSL/TLS</span>
         </div>
-        <div className={styles.toolGroup}>
+        <div className={`${styles.toolGroup} revealOnScroll`}>
           <span className={styles.toolLabel}>Backend</span>
           <span className={styles.toolItems}>Node.js · Express · Python · Supabase Edge Functions</span>
         </div>
-        <div className={styles.toolGroup}>
+        <div className={`${styles.toolGroup} revealOnScroll`}>
           <span className={styles.toolLabel}>Frontend &amp; Mobile</span>
           <span className={styles.toolItems}>TypeScript · React · Next.js · Flutter</span>
         </div>
-        <div className={styles.toolGroup}>
+        <div className={`${styles.toolGroup} revealOnScroll`}>
           <span className={styles.toolLabel}>Data</span>
           <span className={styles.toolItems}>PostgreSQL · Supabase · Cassandra · BigQuery · Metabase</span>
         </div>
