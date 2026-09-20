@@ -1,0 +1,378 @@
+/* Styleguide — n'utilise que les tokens de styles/tokens.css */
+
+.page {
+  min-height: 100dvh;
+  padding: 0 var(--margin) var(--s7);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+}
+
+/* ---- primitives ------------------------------------------- */
+
+.rule { border-top: var(--border); }
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.metaStrong { color: var(--text); }
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+}
+
+.body {
+  font-size: var(--t-body);
+  line-height: var(--leading-body);
+  color: var(--text-dim);
+  max-width: 62ch;
+  margin: 0;
+}
+
+.body strong { color: var(--text); font-weight: 500; }
+
+/* ---- grille de page --------------------------------------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: var(--gutter);
+}
+
+/* rupture d'alignement : une colonne sautée entre label et contenu */
+.colLabel   { grid-column: 1 / span 3; }
+.colContent { grid-column: 5 / span 8; }
+.colFull    { grid-column: 1 / -1; }
+
+/* sans min-width, une piste 1fr refuse de se comprimer et déborde */
+.colLabel, .colContent, .colFull { min-width: 0; }
+
+/* ---- en-tête ----------------------------------------------- */
+
+.masthead {
+  padding-top: var(--s5);
+  padding-bottom: var(--s6);
+}
+
+.mastheadTitle {
+  grid-column: 1 / -1;
+  margin: var(--s4) 0 var(--s3);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+}
+
+/* ---- section ------------------------------------------------ */
+
+.section {
+  padding-top: var(--s4);
+  margin-top: var(--s7);
+}
+
+.sectionHead {
+  margin-bottom: var(--s5);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+}
+
+.sectionNote { margin-top: var(--s2); }
+
+/* ---- 01 · échelle typographique ---------------------------- */
+
+.typeRow {
+  padding: var(--s3) 0;
+  border-top: var(--border);
+}
+
+.typeSpec {
+  margin: var(--s2) 0 0;
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  overflow-wrap: anywhere;
+}
+
+.specHero { font-size: var(--t-hero); }
+.specH2   { font-size: var(--t-h2); }
+.specH3   { font-size: var(--t-h3); }
+
+.specBody {
+  font-size: var(--t-body);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: 0;
+  max-width: 62ch;
+}
+
+.specMeta {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  font-weight: 400;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  line-height: var(--leading-body);
+}
+
+/* ---- 02 · graisses ----------------------------------------- */
+
+.weightRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+  border-top: var(--border);
+}
+
+.weightLabel { flex: 0 0 auto; min-width: var(--s7); }
+
+.weightSpec {
+  font-size: var(--t-h3);
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+}
+
+.wDisplay { font-family: var(--font-display); }
+.wMono    { font-family: var(--font-mono); letter-spacing: 0; }
+.wSerif   { font-family: var(--font-serif); letter-spacing: 0; }
+
+/* ---- 03 · couleurs ------------------------------------------ */
+
+.swatchRow {
+  display: grid;
+  grid-template-columns: var(--s7) 1fr;
+  gap: var(--gutter);
+  align-items: stretch;
+  padding: var(--s2) 0;
+  border-top: var(--border);
+}
+
+.swatch {
+  min-height: var(--s5);
+  border: var(--border);
+  border-radius: var(--radius);
+}
+
+.swatchInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s1);
+}
+
+.sBg      { background: var(--bg); }
+.sSurface { background: var(--surface); }
+.sLine    { background: var(--line); }
+.sText    { background: var(--text); }
+.sDim     { background: var(--text-dim); }
+.sAccent  { background: var(--accent); }
+.sInvert  { background: var(--bg); }
+
+/* ---- 04 · filets & structure -------------------------------- */
+
+.listRow {
+  display: grid;
+  grid-template-columns: var(--s4) 1fr auto;
+  gap: var(--gutter);
+  align-items: baseline;
+  padding: var(--s3) 0;
+  border-top: var(--border);
+  text-decoration: none;
+  color: inherit;
+}
+
+.listRow:last-child { border-bottom: var(--border); }
+
+.listTitle {
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-display);
+  line-height: var(--leading-display);
+}
+
+/* ---- 05 · survols ------------------------------------------- */
+
+.hoverUnderline {
+  color: var(--text);
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: from-font;
+}
+
+.hoverUnderline:hover,
+.hoverUnderline:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+/* Aucun état codé ici : [data-invert-on-hover] rebascule les tokens,
+   le bloc se contente de les lire. Les enfants suivent tout seuls. */
+.hoverInvert {
+  display: block;
+  padding: var(--s3);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  text-decoration: none;
+  transition: background var(--d-fast) var(--ease),
+              color var(--d-fast) var(--ease),
+              border-color var(--d-fast) var(--ease);
+}
+
+/* ---- 06 · espace -------------------------------------------- */
+
+.spaceRow {
+  display: grid;
+  grid-template-columns: var(--s7) 1fr;
+  gap: var(--gutter);
+  align-items: center;
+  padding: var(--s1) 0;
+  border-top: var(--border);
+}
+
+.spaceBar { background: var(--text); border-radius: var(--radius); }
+
+.bar1 { height: var(--s1); }
+.bar2 { height: var(--s2); }
+.bar3 { height: var(--s3); }
+.bar4 { height: var(--s4); }
+.bar5 { height: var(--s5); }
+.bar6 { height: var(--s6); }
+.bar7 { height: var(--s7); }
+
+/* ---- 07 · grille -------------------------------------------- */
+
+.gridDemo {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: var(--gutter);
+}
+
+.gridCol {
+  border-top: var(--border);
+  border-bottom: var(--border);
+  min-height: var(--s6);
+  padding-top: var(--s1);
+  background: var(--surface);
+}
+
+/* ---- 08 · motion -------------------------------------------- */
+
+.motionTrack {
+  border-top: var(--border);
+  border-bottom: var(--border);
+  padding: var(--s3) 0;
+  overflow: hidden;
+}
+
+.motionDot {
+  width: var(--s3);
+  height: var(--s3);
+  border-radius: 50%;
+  background: var(--text);
+  transform: translateX(0);
+  transition: transform var(--d-slow) var(--ease);
+}
+
+.motionTrack:hover .motionDot,
+.motionTrack:focus-within .motionDot {
+  transform: translateX(var(--s7));
+}
+
+/* ---- 09 · chiffres ------------------------------------------ */
+
+.figureRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s6);
+  padding-top: var(--s3);
+  border-top: var(--border);
+}
+
+.figure { display: flex; flex-direction: column; gap: var(--s1); }
+
+.figureSerif {
+  font-family: var(--font-serif);
+  font-size: var(--t-h2);
+  line-height: var(--leading-display);
+  font-feature-settings: 'tnum' 1;
+}
+
+.figureMono {
+  font-family: var(--font-mono);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.figureAccent { color: var(--accent); }
+
+/* ---- bloc à valider ----------------------------------------- */
+
+.openBlock {
+  padding: var(--s4);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.openList { margin: var(--s3) 0 0; padding-left: var(--s3); }
+.openList li { margin-bottom: var(--s2); }
+
+/* Aucune valeur ici : le bloc porte [data-theme="invert"] et lit les
+   mêmes noms de tokens que partout ailleurs. --bg, --text, --line et
+   --text-dim y basculent seuls. */
+.invertPreview {
+  margin-top: var(--s3);
+  padding: var(--s4);
+  border-radius: var(--radius);
+}
+
+.invertDim    { color: var(--text-dim); }
+.invertAccent { color: var(--accent); }
+
+.todo {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  color: var(--accent);
+}
+
+/* ---- responsive --------------------------------------------- */
+
+@media (max-width: 767px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+  .colLabel, .colContent { grid-column: 1 / -1; }
+  .colLabel { margin-bottom: var(--s2); }
+  .section { margin-top: var(--s6); }
+  .masthead { padding-bottom: var(--s5); }
+  .swatchRow, .spaceRow { grid-template-columns: var(--s6) 1fr; }
+  .listRow { grid-template-columns: var(--s4) 1fr; }
+  .listRow > :nth-child(3) { grid-column: 2; }
+  .figureRow { gap: var(--s4); }
+  .gridDemo { grid-template-columns: repeat(4, 1fr); }
+  .weightLabel { min-width: var(--s6); }
+}

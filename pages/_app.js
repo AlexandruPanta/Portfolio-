@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import '../styles/tokens.css'; // autoritaire — charge en dernier
 import { useEffect } from 'react';
 import Head from 'next/head';
 import { Analytics } from '@vercel/analytics/react';

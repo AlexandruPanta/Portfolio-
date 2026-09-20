@@ -49,7 +49,7 @@
 
 .link {
     cursor: pointer;
-    color: var(--text-dim);
+    color: var(--legacy-text-dim);
     font-family: 'Space Grotesk', sans-serif;
     font-size: 0.95rem;
     font-weight: 500;
