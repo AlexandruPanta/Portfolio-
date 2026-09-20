@@ -354,8 +354,16 @@ Ne produire **jamais** :
 - Échelle typographique vérifiée au rendu aux quatre largeurs.
 - Audit passé : aucune valeur de design codée en dur hors `tokens.css`.
 
-**Non mesuré à ce stade** — Lighthouse, LCP, CLS, poids JS. Ces mesures n'ont de sens
-qu'une fois la home assemblée : étape 8.
+**Mesuré aux étapes 1 à 3** — sur la home, à 375, 414, 500, 768, 1440 et 1920 :
+
+- zéro débordement horizontal
+- zéro paire texte / fond sous 4.5:1
+- échelle typographique conforme au tableau §5
+- zéro décalage de mise en page à la révélation de l'aperçu (place réservée d'avance)
+- **JS initial : 121.9 kB gzip** — budget 150 kB tenu, GSAP et Lenis différés
+
+**Non mesuré à ce stade** — Lighthouse, LCP, CLS. Ces mesures n'ont de sens qu'une fois
+toutes les sections assemblées : étape 8.
 
 ---
 
@@ -371,6 +379,10 @@ qu'une fois la home assemblée : étape 8.
 | (02) System | Stack traité comme une fiche technique, en colonnes mono. **Seule section inversée** — porte `[data-theme="invert"]`. |
 | (03) Contact | Une adresse mail en `--t-h2`, liens en mono. Pas de formulaire. Reste clair : l'adresse doit être l'élément le plus lumineux de la page. |
 | Footer | Filet 1px, mono, fuseau horaire : `PARIS — UTC+2`. |
+
+**Langue** — labels meta en anglais (`(01) — SELECTED WORK`), corps de texte en
+français. Les labels sont nommés en anglais par la commande elle-même ; la cible est
+française. Décision à confirmer.
 
 **Contenu réel** — aucun projet inventé :
 
@@ -394,11 +406,27 @@ l'information arrive.
 
 ```
 DESIGN.md                      ce document — référence normative
-styles/tokens.css              tokens, portée inversée, socle éditorial
-styles/Styleguide.module.css   habillage de la route de contrôle
+styles/tokens.css              tokens, portée inversée, socle éditorial, primitives
+                               [data-trace] et [data-reveal]
+lib/motion.js                  runtime motion : Lenis, ScrollTrigger, le tracé,
+                               les reveals. Chargé en import() différé.
+pages/_document.js             pose la classe `js` avant la peinture, précharge
+                               Satoshi et JetBrains Mono
+pages/index.js                 la home — loader, nav, hero, (01) Selected work
+styles/Home.module.css         habillage de la home
 pages/styleguide.js            /styleguide — vérification visuelle du système
+styles/Styleguide.module.css   habillage de la route de contrôle
 public/fonts/*.woff2           4 fichiers, 105 kB, subset latin
 ```
+
+**Le verrou sans JavaScript** — `pages/_document.js` pose `class="js"` sur `<html>`
+avant la peinture. Elle seule autorise un état de départ masqué : `[data-reveal]` à
+opacity 0, `[data-trace]` à `scaleX(0)`, et l'affichage du loader. Sans JavaScript,
+aucun de ces états n'existe : la page est entière, le loader n'apparaît jamais.
+
+**Le motion est différé** — `lib/motion.js` est chargé en `import()` après
+l'hydratation. GSAP et Lenis ne servent pas au premier rendu et resteraient 54 kB gzip
+de trop dans le JS initial.
 
 **Portées** — `tokens.css` déclare ses tokens sur `:root`, les rebascule sous
 `[data-theme="invert"]` et `[data-invert-on-hover]:hover`, et pose son socle d'éléments
@@ -408,28 +436,31 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 
 ---
 
-## 14 · Dette transitoire
+## 14 · Dette
 
-À solder à l'étape 1, quand l'ancienne home disparaît :
+**Soldé à l'étape 1**
 
-- `styles/globals.css` et les modules de l'ancien thème sombre sont encore chargés.
-  Leurs variables `--text` / `--text-dim` ont été renommées `--legacy-text` /
-  `--legacy-text-dim` pour libérer les tokens. À supprimer avec le reste.
-- `tokens.css` neutralise les pseudo-éléments décoratifs de l'ancien `body`
-  (bloc commenté `TRANSITION`). À retirer en même temps.
-- `pages/_document.js` charge encore Inter, Orbitron et Space Grotesk depuis Google Fonts.
-  Aucune n'est utilisée par le nouveau système : les `<link>` coûtent un preconnect et une
-  requête CSS pour rien. À retirer.
-- `pages/index.js` et `components/*` sont l'ancien site. À remplacer intégralement.
-- `package.json` déclare `react@18.1.0` avec `next@16.0.7`, qui attend React 19.
-  Le build et le rendu passent, mais le décalage est à vérifier avant l'étape 8.
+- `styles/globals.css`, `components/*` et les modules de l'ancien thème sombre :
+  supprimés. Les renommages `--legacy-*` sont partis avec eux.
+- `pages/_document.js` ne charge plus Inter, Orbitron et Space Grotesk depuis Google
+  Fonts. Plus aucune requête de police tierce.
+- `react@18.1.0` ne correspondait pas à `next@16.0.7`, qui attend React 19. Aligné en
+  `react@19.3.0` / `react-dom@19.3.0`. `react-scroll`, les trois paquets FontAwesome et
+  la chaîne Jest (aucun test dans le dépôt) sont retirés.
+- `npm audit` : 4 vulnérabilités (dont 1 critique sur Next) corrigées, Next en 16.3.5.
+  0 vulnérabilité restante.
+- `.next/` n'est plus versionné. Vérification faite avant retrait : aucune variable
+  d'environnement applicative dans les bundles committés, seulement les drapeaux
+  internes de Next et la sentinelle `ReactPropTypesSecret` de React.
 
-**Soldé** — `.next/` n'est plus versionné (commit `chore: untrack .next`, 102 fichiers,
-114 Mo). Vérification faite avant retrait : aucune variable d'environnement applicative
-dans les bundles committés, seulement les drapeaux internes de Next et la sentinelle
-`ReactPropTypesSecret` de React.
+**Restant**
 
----
+- `public/` contient encore 21 images et vidéos de l'ancien site. À supprimer quand les
+  vrais aperçus projets arriveront, pour ne pas effacer un fichier encore utile.
+- La navigation ne liste que `(01) SELECTED WORK`. `(02) SYSTEM` et `(03) CONTACT` s'y
+  ajoutent aux étapes 5 et 6 : un lien vers une ancre qui n'existe pas ne se livre pas.
+- Les lignes de la liste projets ne sont pas encore des liens. Elles le deviennent à
+  l'étape 4, quand les case studies existent.
 
 ## 15 · Checklist avant chaque bloc
 

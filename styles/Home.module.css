@@ -1,0 +1,362 @@
+/* Home — n'utilise que les tokens de styles/tokens.css */
+
+.page {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+}
+
+/* ---- primitives partagées ---------------------------------- */
+
+.meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+}
+
+.metaStrong { color: var(--text); }
+
+.rule { border-top: var(--border); }
+
+.shell {
+  padding-inline: var(--margin);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: var(--gutter);
+}
+
+.grid > * { min-width: 0; }
+
+/* ---- loader ------------------------------------------------- */
+/* Affiché uniquement si JS est présent. Sans lui, il n'existe pas. */
+
+.loader { display: none; }
+
+:global(html.js) .loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--margin);
+  background: var(--bg);
+}
+
+.loaderCount {
+  font-family: var(--font-mono);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.loaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+
+/* Le premier tracé du site : la barre du loader est un filet 1px. */
+.loaderTrack { border-top: var(--border); }
+
+.loaderBar {
+  height: 0;
+  border-top: 1px solid var(--text);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ---- navigation --------------------------------------------- */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding-block: var(--s3);
+  border-bottom: var(--border);
+  background: var(--bg);
+}
+
+.navMark {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.navList {
+  display: flex;
+  gap: var(--s4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: from-font;
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+.skipLink {
+  position: absolute;
+  left: var(--margin);
+  top: var(--s2);
+  z-index: 200;
+  padding: var(--s1) var(--s2);
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus-visible { transform: none; }
+
+/* ---- hero ---------------------------------------------------- */
+
+.hero {
+  padding-block: var(--s7) var(--s7);
+}
+
+.heroLabel { grid-column: 1 / span 3; }
+
+.heroName {
+  grid-column: 1 / -1;
+  margin: var(--s4) 0 0;
+  font-size: var(--t-hero);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+}
+
+/* rupture d'alignement : la ligne de positionnement démarre col. 5 */
+.heroLine {
+  grid-column: 5 / span 7;
+  margin: var(--s5) 0 0;
+  font-size: var(--t-h3);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.heroFoot {
+  grid-column: 1 / span 4;
+  margin-top: var(--s5);
+}
+
+/* ---- section ------------------------------------------------- */
+
+.section { padding-block: var(--s7); }
+
+.sectionHead { margin-bottom: var(--s6); }
+
+.sectionLabel { grid-column: 1 / span 3; }
+
+.sectionIntro {
+  grid-column: 5 / span 7;
+  margin: 0;
+  font-size: var(--t-h3);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+
+/* ---- (01) liste projets -------------------------------------- */
+
+.work { display: block; }
+
+.workRow {
+  display: grid;
+  grid-template-columns: var(--s5) 1fr auto;
+  gap: var(--gutter);
+  align-items: start;
+  padding-block: var(--s4);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Titre et résumé dans une seule cellule : deux rangées de grille
+   laisseraient la colonne de droite dicter la hauteur du titre. */
+.workMain { min-width: 0; }
+
+.workSeparator { border-top: var(--border); }
+
+.workNum {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  color: var(--text-dim);
+}
+
+.workTitle {
+  margin: 0;
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: from-font;
+}
+
+.workRow:hover .workTitle,
+.workRow:focus-visible .workTitle {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+.workAside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s1);
+  text-align: right;
+}
+
+.workSummary {
+  margin: var(--s2) 0 0;
+  max-width: 54ch;
+  font-size: var(--t-body);
+  line-height: var(--leading-body);
+  color: var(--text-dim);
+}
+
+/* ---- aperçu au survol ---------------------------------------- */
+/* En flux dans la colonne de droite, place réservée d'avance : aucun
+   décalage à l'apparition, et surtout aucune carte flottante — fond
+   --bg comme la page, filet 1px, angles droits. */
+
+.preview {
+  width: 18vw;
+  min-width: var(--s7);
+  margin-top: var(--s3);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--d-fast) var(--ease),
+              visibility var(--d-fast) var(--ease);
+}
+
+.workRow:hover .preview,
+.workRow:focus-within .preview {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ratio réservé : les images arriveront sans décalage de mise en page */
+.previewSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 10;
+  padding: var(--s2);
+  text-align: center;
+}
+
+.previewFoot {
+  padding: var(--s2);
+  border-top: var(--border);
+}
+
+.figure {
+  font-family: var(--font-serif);
+  font-size: var(--t-h3);
+  line-height: var(--leading-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.figureAccent { color: var(--accent); }
+
+.todo {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---- découpe en lignes (SplitText) --------------------------- */
+
+:global(.splitLine) { overflow: hidden; }
+
+/* ---- responsive ---------------------------------------------- */
+
+@media (max-width: 767px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+  .heroLabel,
+  .heroName,
+  .heroLine,
+  .heroFoot,
+  .sectionLabel,
+  .sectionIntro { grid-column: 1 / -1; }
+
+  .hero { padding-block: var(--s6); }
+  .section { padding-block: var(--s6); }
+  .sectionHead { margin-bottom: var(--s5); }
+  .heroLine { margin-top: var(--s4); }
+  .heroFoot { margin-top: var(--s4); }
+
+  .workRow {
+    grid-template-columns: var(--s4) 1fr;
+    padding-block: var(--s3);
+  }
+  .workAside {
+    grid-column: 2;
+    align-items: flex-start;
+    text-align: left;
+    margin-top: var(--s2);
+  }
+
+  .navList { gap: var(--s3); }
+  .loaderCount { font-size: var(--t-h3); }
+}
+
+/* Pas de survol au doigt : l'aperçu ne se cache pas, il est simplement là. */
+@media (hover: none) {
+  .preview { opacity: 1; visibility: visible; }
+}
+
+@media (max-width: 767px) {
+  .preview { width: auto; min-width: 0; opacity: 1; visibility: visible; }
+}

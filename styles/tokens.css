@@ -174,9 +174,7 @@ html ::-webkit-scrollbar-thumb {
 }
 
 /* ---- 3 · SOCLE ÉDITORIAL ------------------------------------
-   Opt-in : l'élément racine de la page porte [data-editorial].
-   Tant que l'ancien globals.css existe, cette portée évite toute
-   collision avec le thème sombre hérité.
+   Opt-in : l'élément racine de chaque page porte [data-editorial].
    -------------------------------------------------------------- */
 
 html:has([data-editorial]) {
@@ -198,10 +196,6 @@ body:has([data-editorial]) {
   text-rendering: optimizeLegibility;
 }
 
-/* TRANSITION — neutralise les calques décoratifs de l'ancien thème.
-   À supprimer en même temps que styles/globals.css (étape 1). */
-body:has([data-editorial])::before,
-body:has([data-editorial])::after { content: none; }
 
 
 [data-editorial] *,
@@ -219,7 +213,30 @@ body:has([data-editorial])::after { content: none; }
   outline-offset: var(--focus-offset);
 }
 
-/* ---- 4 · MOTION RÉDUIT --------------------------------------
+/* ---- 4 · LE TRACÉ -------------------------------------------
+   Effet signature. Un filet marqué [data-trace] part à scaleX(0) et
+   se trace à l'entrée de sa section (DESIGN.md §8).
+   L'état de départ n'est posé que si JS est présent : sans lui, les
+   filets sont dessinés d'emblée et la page reste entière.
+   -------------------------------------------------------------- */
+
+[data-trace] { transform-origin: left center; will-change: transform; }
+html.js [data-trace] { transform: scaleX(0); }
+
+/* Reveal de contenu : translateY + opacity, rien d'autre. Même régime —
+   sans JS, rien n'est masqué. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y));
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-trace] { transform: none; }
+  html.js [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* ---- 5 · MOTION RÉDUIT --------------------------------------
    Tout s'affiche instantanément. Le site reste 100 % lisible.
    -------------------------------------------------------------- */
 
