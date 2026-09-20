@@ -103,8 +103,13 @@
   --focus-ring:   2px solid var(--accent);
   --focus-offset: 2px;
 
-  /* survol — soulignement accent */
-  --underline-offset: 0.3em;
+  /* survol — soulignement accent.
+     L'épaisseur est FIXE : from-font la ferait suivre la taille de
+     police et donnerait un trait de 4px sous un titre de 72px, seul
+     trait gras d'une grammaire entièrement en 1px.
+     L'offset, lui, reste proportionnel. */
+  --underline-thickness: 1px;
+  --underline-offset:    0.22em;
 }
 
 @media (max-width: 767px) {
@@ -220,21 +225,15 @@ body:has([data-editorial]) {
    filets sont dessinés d'emblée et la page reste entière.
    -------------------------------------------------------------- */
 
-[data-trace] { transform-origin: left center; will-change: transform; }
-html.js [data-trace] { transform: scaleX(0); }
+[data-trace] { transform-origin: left center; }
 
-/* Reveal de contenu : translateY + opacity, rien d'autre. Même régime —
-   sans JS, rien n'est masqué. */
-html.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(var(--reveal-y));
-  will-change: transform, opacity;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.js [data-trace] { transform: none; }
-  html.js [data-reveal] { opacity: 1; transform: none; }
-}
+/* AUCUN état masqué n'est posé par le CSS.
+   Une règle adossée à html.js ouvrirait une fenêtre : la classe est
+   posée avant la peinture, alors que lib/motion.js arrive en import()
+   différé. Sur réseau lent, le contenu resterait à opacité 0 pendant
+   toute cette fenêtre — et invisible pour de bon si le chunk échoue.
+   Le masquage est donc posé par lib/motion.js lui-même, une fois
+   chargé, et uniquement sur ce qui n'est pas encore à l'écran. */
 
 /* ---- 5 · MOTION RÉDUIT --------------------------------------
    Tout s'affiche instantanément. Le site reste 100 % lisible.

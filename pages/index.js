@@ -1,47 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import s from '../styles/Home.module.css';
+import copy from '../content/copy';
 
 /* GSAP + Lenis ne servent pas au premier rendu : ils sont chargés après
    l'hydratation pour rester hors du JS initial (budget 150 kB gzip).
-   La page est entière et lisible avant leur arrivée. */
+   Aucun état masqué n'est posé avant qu'ils ne soient là — voir §8. */
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* Contenu réel. Rien n'est inventé : ce qui manque porte un TODO visible. */
-const WORK = [
-  {
-    num: '01',
-    title: 'ZoeCare / ZoeFall',
-    year: null,
-    tags: 'IoT · SATT Paris-Saclay',
-    summary:
-      'Plateforme IoT de détection de chute, développée en alternance à la SATT Paris-Saclay.',
-    figure: null,
-    preview: 'aperçu ZoeCare',
-  },
-  {
-    num: '02',
-    title: 'AB Tasty — EmotionsAI',
-    year: null,
-    tags: 'Performance · JavaScript',
-    summary:
-      'Tag de tracking EmotionsAI. Blocking time ramené de 120 ms à 53 ms.',
-    figure: '−56%',
-    preview: 'aperçu AB Tasty',
-  },
-  {
-    num: '03',
-    title: 'Homelab',
-    year: null,
-    tags: 'Debian · Média · Réseau · VPN',
-    summary:
-      'iMac 2009 recyclé en serveur Debian : média, réseau, VPN.',
-    figure: null,
-    preview: 'aperçu Homelab',
-  },
-];
 
 /* Loader — compteur % en mono. 1.2s au maximum, jamais davantage. */
 function Loader({ onDone }) {
@@ -68,7 +35,9 @@ function Loader({ onDone }) {
   return (
     <div className={s.loader} aria-hidden="true">
       <div className={s.loaderRow}>
-        <p className={s.meta}>(00) — Chargement</p>
+        <p className={s.meta}>
+          {copy.loader.index} — {copy.loader.label}
+        </p>
         <p className={s.loaderCount}>{String(count).padStart(3, '0')}</p>
       </div>
       <div className={s.loaderTrack}>
@@ -80,60 +49,72 @@ function Loader({ onDone }) {
 
 export default function Home() {
   const scopeRef = useRef(null);
-  /* Le loader n'existe que si JS tourne ET que le mouvement est accepté. */
+  const motionRef = useRef(null);
+  const primedRef = useRef(false);
+
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [motionLoaded, setMotionLoaded] = useState(false);
+
+  const finishLoader = useCallback(() => setReady(true), []);
 
   useEffect(() => {
     if (prefersReducedMotion()) setReady(true);
     else setLoading(true);
   }, []);
 
+  /* Le chargement part dès le montage, en parallèle du loader : sur un
+     réseau correct, motion.js est prêt bien avant la levée du loader. */
   useEffect(() => {
-    if (!ready || !scopeRef.current) return;
-    let stopScroll = null;
+    if (prefersReducedMotion()) return undefined;
     let cancelled = false;
-
-    import('../lib/motion').then(({ initSmoothScroll, initTrace, initReveals }) => {
-      if (cancelled || !scopeRef.current) return;
-      stopScroll = initSmoothScroll();
-      initTrace(scopeRef.current);
-      initReveals(scopeRef.current);
+    import('../lib/motion').then((mod) => {
+      if (cancelled) return;
+      motionRef.current = mod;
+      setMotionLoaded(true);
     });
-
     return () => {
       cancelled = true;
-      if (stopScroll) stopScroll();
     };
-  }, [ready]);
+  }, []);
+
+  /* Masquer pendant que le loader couvre l'écran : invisible, donc sûr.
+     S'il est déjà levé, on ne prime pas — `start` ne touchera alors
+     qu'aux éléments hors écran. */
+  useEffect(() => {
+    if (!motionLoaded || ready || !scopeRef.current) return;
+    primedRef.current = motionRef.current.prime(scopeRef.current);
+  }, [motionLoaded, ready]);
+
+  useEffect(() => {
+    if (!ready || !motionLoaded || !scopeRef.current) return undefined;
+    return motionRef.current.start(scopeRef.current, { primed: primedRef.current });
+  }, [ready, motionLoaded]);
 
   return (
     <>
       <Head>
-        <title>Alex Panta — Systèmes connectés, du capteur à la production</title>
-        <meta
-          name="description"
-          content="Alex Panta, développeur full-stack orienté systèmes : IoT et embarqué, backend, sécurité. Plateforme IoT de détection de chute, optimisation de performance, infrastructure auto-hébergée."
-        />
+        <title>{copy.head.title}</title>
+        <meta name="description" content={copy.head.description} />
       </Head>
 
-      {loading && !ready ? <Loader onDone={() => setReady(true)} /> : null}
+      {loading && !ready ? <Loader onDone={finishLoader} /> : null}
 
       <div data-editorial className={s.page} ref={scopeRef}>
         <a className={s.skipLink} href="#work">
-          Aller au contenu
+          {copy.nav.skip}
         </a>
 
         {/* ---------- navigation ---------- */}
         <header className={`${s.shell} ${s.nav}`}>
           <a className={s.navMark} href="#top">
-            Alex Panta
+            {copy.nav.mark}
           </a>
-          <nav aria-label="Sections">
+          <nav aria-label={copy.nav.sectionsLabel}>
             <ul className={s.navList}>
               <li>
                 <a className={s.navLink} href="#work">
-                  (01) Selected work
+                  {copy.work.index} {copy.work.label}
                 </a>
               </li>
             </ul>
@@ -145,20 +126,19 @@ export default function Home() {
           <section className={`${s.shell} ${s.hero}`}>
             <div className={s.grid}>
               <p className={`${s.meta} ${s.heroLabel}`} data-reveal>
-                (00) — <span className={s.metaStrong}>Alex Panta</span>
+                {copy.hero.index} — <span className={s.metaStrong}>{copy.hero.label}</span>
               </p>
 
               <h1 className={s.heroName} data-reveal data-reveal-delay="0.06">
-                Alex Panta
+                {copy.hero.name}
               </h1>
 
               <p className={s.heroLine} data-reveal-lines>
-                Je construis des systèmes connectés de bout en bout — du capteur embarqué
-                à l&rsquo;infrastructure qui le tient en production.
+                {copy.hero.line}
               </p>
 
               <p className={`${s.meta} ${s.heroFoot}`} data-reveal data-reveal-delay="0.12">
-                Paris · 2026
+                {copy.hero.foot}
               </p>
             </div>
           </section>
@@ -168,44 +148,39 @@ export default function Home() {
             <div className={`${s.rule} ${s.sectionHead}`} data-trace>
               <div className={s.grid} style={{ paddingTop: 'var(--s4)' }}>
                 <p className={`${s.meta} ${s.sectionLabel}`} data-reveal>
-                  (01) — <span className={s.metaStrong}>Selected work</span>
+                  {copy.work.index} — <span className={s.metaStrong}>{copy.work.label}</span>
                 </p>
                 <p className={s.sectionIntro} data-reveal-lines>
-                  Trois systèmes, pas trois maquettes. Chacun est allé jusqu&rsquo;en
-                  production.
+                  {copy.work.intro}
                 </p>
               </div>
             </div>
 
             <div className={s.work}>
-              {WORK.map((project) => (
+              {copy.work.projects.map((project) => (
                 <article key={project.num} className={s.workSeparator} data-trace>
                   <div className={s.workRow}>
                     <p className={s.workNum}>{project.num}</p>
 
                     <div className={s.workMain}>
                       <h2 className={s.workTitle}>{project.title}</h2>
+                      <p className={s.workContext}>{project.context}</p>
                       <p className={s.workSummary}>{project.summary}</p>
                     </div>
 
                     <div className={s.workAside}>
-                      {project.year ? (
-                        <p className={s.meta}>{project.year}</p>
-                      ) : (
-                        <p className={s.todo}>TODO: dates</p>
-                      )}
-                      <p className={s.meta}>{project.tags}</p>
+                      <p className={s.meta}>{project.tags.join(copy.glyph.dot)}</p>
 
                       <div className={s.preview}>
-                      <div className={s.previewSlot}>
-                        <p className={s.todo}>TODO: {project.preview}</p>
-                      </div>
-                      {project.figure ? (
-                        <div className={s.previewFoot}>
-                          <p className={`${s.figure} ${s.figureAccent}`}>{project.figure}</p>
-                          <p className={s.meta}>Blocking time · 120 ms → 53 ms</p>
+                        <div className={s.previewSlot}>
+                          <p className={s.todo}>TODO: {project.preview}</p>
                         </div>
-                      ) : null}
+                        {project.figure ? (
+                          <div className={s.previewFoot}>
+                            <p className={`${s.figure} ${s.figureAccent}`}>{project.figure}</p>
+                            <p className={s.meta}>{project.figureCaption}</p>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </div>

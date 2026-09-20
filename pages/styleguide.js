@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import s from '../styles/Styleguide.module.css';
+import copy from '../content/copy';
 
 const TYPE = [
   {
@@ -205,16 +206,14 @@ export default function Styleguide() {
               <p className={`${s.meta} ${s.sectionNote}`}>Ligne éditoriale — le motif de la liste projets</p>
               <div>
                 {[
-                  ['01', 'ZoeCare / ZoeFall', '2024—25', 'IoT · LoRa · Node'],
-                  ['02', 'AB Tasty — EmotionsAI', '2025', 'Perf · JS · Tag'],
-                  ['03', 'Homelab', '2023—', 'Debian · Réseau · VPN'],
-                ].map(([num, title, year, tags]) => (
+                  ['01', 'ZoeCare / ZoeFall', 'IoT · Embarqué · Backend'],
+                  ['02', 'AB Tasty — EmotionsAI', 'Performance · JavaScript'],
+                  ['03', 'Homelab', 'Debian · Réseau · VPN'],
+                ].map(([num, title, tags]) => (
                   <div key={num} className={s.listRow}>
                     <p className={s.mono}>{num}</p>
                     <p className={s.listTitle}>{title}</p>
-                    <p className={s.mono}>
-                      {year} · {tags}
-                    </p>
+                    <p className={s.mono}>{tags}</p>
                   </div>
                 ))}
               </div>
@@ -234,9 +233,8 @@ export default function Styleguide() {
               <p className={`${s.meta} ${s.sectionNote}`}>A — soulignement accent, offset 0.3em</p>
               <p className={s.specH3} style={{ marginTop: 'var(--s2)' }}>
                 <a className={s.hoverUnderline} href="#sg-05">
-                  alexandru.panta@exemple.fr
+                  {copy.contact.email}
                 </a>
-                <span className={s.todo}> TODO: adresse définitive</span>
               </p>
 
               <p className={`${s.meta}`} style={{ marginTop: 'var(--s5)' }}>
@@ -251,7 +249,7 @@ export default function Styleguide() {
               >
                 <p className={s.mono}>(02) — AB Tasty</p>
                 <p className={s.listTitle} style={{ marginTop: 'var(--s1)' }}>
-                  Tag EmotionsAI — 120ms → 53ms
+                  Tag EmotionsAI — 120 ms → 53 ms
                 </p>
               </a>
             </div>
@@ -412,10 +410,40 @@ export default function Styleguide() {
           </div>
         </section>
 
-        {/* ---------- en attente ---------- */}
+        {/* ---------- 11 adresse ---------- */}
         <section className={s.section}>
           <SectionHead
             index="11"
+            title="Adresse mail"
+            note={
+              'Gabarit du bloc (03) Contact. 29 caractères en --t-h2 débordent sous 768px : ' +
+              'la césure est autorisée au @ et nulle part ailleurs, et sous 768px l\u2019adresse ' +
+              'descend en --t-h3. La partie locale ne se coupe jamais au milieu.'
+            }
+          />
+          <div className={s.grid}>
+            {/* pleine largeur : c'est la mesure du futur bloc (03) Contact,
+                pas celle d'une colonne de documentation */}
+            <div className={s.colFull}>
+              <p className={s.meta}>
+                {copy.contact.index} — <span className={s.metaStrong}>{copy.contact.label}</span>
+              </p>
+              <a className={s.address} href={`mailto:${copy.contact.email}`}>
+                {copy.contact.emailLocal}
+                <wbr />
+                {copy.contact.emailDomain}
+              </a>
+              <p className={`${s.meta} ${s.sectionNote}`} style={{ marginTop: 'var(--s3)' }}>
+                Footer — {copy.footer.timezone}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- en attente ---------- */}
+        <section className={s.section}>
+          <SectionHead
+            index="12"
             title="En attente de contenu"
             note="Rien n'est inventé. Ces marques restent visibles jusqu'à ce que l'information arrive."
           />
@@ -424,12 +452,8 @@ export default function Styleguide() {
               <div className={s.openBlock}>
                 <ul className={`${s.body} ${s.openList}`}>
                   <li>
-                    <span className={s.todo}>TODO:</span> adresse mail réelle à afficher dans le
-                    bloc contact.
-                  </li>
-                  <li>
-                    <span className={s.todo}>TODO:</span> dates exactes de l&rsquo;alternance SATT
-                    Paris-Saclay et du poste AB Tasty.
+                    <span className={s.todo}>TODO:</span> les trois aperçus projets. Emplacement
+                    réservé au bon ratio, filet 1px, aucune image de remplacement.
                   </li>
                 </ul>
               </div>

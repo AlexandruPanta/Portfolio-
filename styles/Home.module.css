@@ -121,13 +121,15 @@
   color: var(--text-dim);
   text-decoration: none;
   text-underline-offset: var(--underline-offset);
-  text-decoration-thickness: from-font;
+  text-decoration-thickness: var(--underline-thickness);
 }
 
 .navLink:hover,
 .navLink:focus-visible {
   color: var(--text);
-  text-decoration: underline;
+  /* text-decoration-line, jamais le raccourci : `text-decoration`
+     réinitialise thickness et offset à `auto`. */
+  text-decoration-line: underline;
   text-decoration-color: var(--accent);
 }
 
@@ -233,12 +235,14 @@
   line-height: var(--leading-display);
   letter-spacing: var(--track-display);
   text-underline-offset: var(--underline-offset);
-  text-decoration-thickness: from-font;
+  text-decoration-thickness: var(--underline-thickness);
 }
 
 .workRow:hover .workTitle,
 .workRow:focus-visible .workTitle {
-  text-decoration: underline;
+  /* text-decoration-line, jamais le raccourci : `text-decoration`
+     réinitialise thickness et offset à `auto`. */
+  text-decoration-line: underline;
   text-decoration-color: var(--accent);
 }
 
@@ -250,8 +254,21 @@
   text-align: right;
 }
 
-.workSummary {
+/* Ligne de contexte — mono, --text-dim, sous le titre. Employeur,
+   nature du poste et dates. Jamais dans les tags. */
+.workContext {
   margin: var(--s2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  line-height: var(--leading-body);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+}
+
+.workSummary {
+  margin: var(--s1) 0 0;
   max-width: 54ch;
   font-size: var(--t-body);
   line-height: var(--leading-body);

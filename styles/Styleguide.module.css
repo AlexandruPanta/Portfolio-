@@ -216,12 +216,14 @@
   color: var(--text);
   text-decoration: none;
   text-underline-offset: var(--underline-offset);
-  text-decoration-thickness: from-font;
+  text-decoration-thickness: var(--underline-thickness);
 }
 
 .hoverUnderline:hover,
 .hoverUnderline:focus-visible {
-  text-decoration: underline;
+  /* text-decoration-line, jamais le raccourci : `text-decoration`
+     réinitialise thickness et offset à `auto`. */
+  text-decoration-line: underline;
   text-decoration-color: var(--accent);
 }
 
@@ -375,4 +377,39 @@
   .figureRow { gap: var(--s4); }
   .gridDemo { grid-template-columns: repeat(4, 1fr); }
   .weightLabel { min-width: var(--s6); }
+}
+
+/* ---- gabarit adresse mail (étape 6) ------------------------- */
+/* 29 caractères en --t-h2 débordent sous 768px. La césure n'est
+   autorisée qu'au @ : le domaine passe à la ligne d'un bloc, la partie
+   locale ne se coupe jamais au milieu. Sous 768px, l'adresse descend
+   en --t-h3 et tient alors sur une ligne. */
+
+.address {
+  display: inline-block;
+  margin: var(--s2) 0 0;
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  color: var(--text);
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: var(--underline-thickness);
+  /* pas de coupure arbitraire : seul le <wbr> posé au @ fait foi */
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+.address:hover,
+.address:focus-visible {
+  /* text-decoration-line, jamais le raccourci : `text-decoration`
+     réinitialise thickness et offset à `auto`. */
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+}
+
+@media (max-width: 767px) {
+  .address { font-size: var(--t-h3); }
 }

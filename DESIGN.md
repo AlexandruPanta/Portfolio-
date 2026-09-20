@@ -101,7 +101,8 @@ de §6. Même palette, déclarée une seule fois.
 |---|---|
 | `--focus-ring` | `2px solid var(--accent)` |
 | `--focus-offset` | `2px` |
-| `--underline-offset` | `0.3em` |
+| `--underline-thickness` | `1px` — fixe, jamais proportionnel |
+| `--underline-offset` | `0.22em` — proportionnel, lui |
 
 ### Règle des tokens composés
 
@@ -236,6 +237,16 @@ Toute piste `1fr` porte un `min-width: 0` : sans lui une colonne de grille refus
 comprimer sous la largeur de son contenu et fait déborder la page. Les chaînes mono
 longues portent `overflow-wrap: anywhere`.
 
+### Langue
+
+> Labels meta en **anglais** (`(01) — SELECTED WORK`), corps de texte en **français**.
+> Les labels ne se traduisent pas : ils sont déjà dans la langue du système.
+
+### Chaînes de copie
+
+Toute la copie vit dans `content/copy.js`, aucune chaîne rédactionnelle dans le JSX.
+Une version EN s'ajoute en dupliquant la clé de langue, sans toucher un composant.
+
 ---
 
 ## 7 · Vocabulaire autorisé
@@ -249,10 +260,29 @@ filet en haut, `--s3` de padding vertical. Pas de carte, pas d'ombre, pas de fon
 
 **Label de section** — `(01) — SELECTED WORK`, mono 11px uppercase.
 
+**Ligne de contexte** — sous le titre d'un projet, mono `--t-meta`, `--text-dim`,
+uppercase. Elle porte l'employeur, la nature du poste et les dates :
+`ALTERNANCE · SATT PARIS-SACLAY · 2024 → EN COURS`. La flèche est celle du bloc chiffres
+(`120 MS → 53 MS`), une seule forme pour les deux usages.
+
+> Un employeur n'est pas une techno. Il ne descend jamais dans les tags.
+
+**Tags** — trois au maximum par ligne, même catégorie partout : des technologies et des
+domaines, rien d'autre.
+
 **Survols — deux états, pas trois :**
 
-- **A · soulignement** — `text-decoration: underline`, couleur `--accent`,
-  offset `var(--underline-offset)`, épaisseur `from-font`.
+- **A · soulignement** — `text-decoration-line: underline`, couleur `--accent`,
+  offset `var(--underline-offset)` (0.22em, proportionnel),
+  épaisseur `var(--underline-thickness)` (**1px fixe**).
+
+> L'épaisseur du soulignement est fixe, jamais proportionnelle. `from-font` la fait
+> suivre la taille de police et donne un trait de 4px sous un titre de 72px — le seul
+> trait gras d'une grammaire entièrement en 1px.
+
+> Toujours `text-decoration-line`, jamais le raccourci `text-decoration` : le raccourci
+> réinitialise `thickness` et `offset` à `auto` et annule silencieusement la règle
+> ci-dessus.
 - **B · inversion complète du bloc** — l'élément porte `data-invert-on-hover`, qui
   rebascule les tokens. Le bloc se contente de lire `--bg` et `--text` ; ses enfants
   suivent seuls. Aucun état de couleur n'est écrit dans le composant.
@@ -266,6 +296,12 @@ pas de parallaxe.
 (`−56%`), mono pour la mesure (`53ms`, `120ms`), `--text-dim` pour la valeur « avant ».
 Chasse tabulaire obligatoire (`font-variant-numeric: tabular-nums`) : un compteur animé
 ne doit produire **aucun** décalage de mise en page.
+
+**Adresse mail** — `--t-h2` au-dessus de 768px, `--t-h3` en dessous. 29 caractères
+débordent en `--t-h2` sous 768px. La césure est autorisée **au `@` et nulle part
+ailleurs** : `<wbr>` posé entre la partie locale et le domaine, avec
+`word-break: keep-all` et `overflow-wrap: normal` pour que la partie locale ne se coupe
+jamais au milieu. Gabarit vérifiable dans `/styleguide`, section (11).
 
 **Grain** — écarté, définitivement. Ne pas reproposer.
 
@@ -305,6 +341,27 @@ tracent de gauche à droite à l'entrée de leur section.
 Si tous les filets tracent, l'effet devient une texture et cesse d'être une signature.
 
 `prefers-reduced-motion: reduce` → `scaleX(1)` immédiat, **aucun trigger créé**.
+
+### Aucun état masqué avant que le motion soit là
+
+> Le CSS ne pose jamais d'état masqué. Une règle adossée à `html.js` ouvrirait une
+> fenêtre : la classe est posée avant la peinture, alors que `lib/motion.js` arrive en
+> `import()` différé. Sur réseau lent le contenu resterait invisible pendant toute la
+> fenêtre — et pour de bon si le chunk échoue.
+
+Le masquage est posé par `lib/motion.js`, une fois chargé, selon deux cas :
+
+- **Le chunk arrive pendant le loader** — l'écran est couvert, on masque tout
+  (`prime`). Le reveal du hero joue normalement à la levée.
+- **Le chunk arrive après** — on ne masque **que ce qui est hors écran**. Ce que
+  l'utilisateur a déjà lu ne disparaît jamais pour réapparaître.
+- **Le chunk n'arrive pas** — rien n'est masqué, la page est entière, elle a
+  simplement perdu ses animations.
+
+Vérifié en conditions réelles : chunk retiré du build (jamais livré) → 0 élément
+masqué, page intégralement lisible ; chunk bridé à 3 s via proxy, soit bien après la
+levée du loader à 1.2 s → 0 élément masqué **à l'écran**, le tracé joue quand même au
+défilement sur ce qui est plus bas.
 
 `prefers-reduced-motion: reduce` → durées à 0.01ms, `--reveal-y` à 0, tout s'affiche
 instantanément, site 100 % lisible. Déjà câblé dans `tokens.css`.
@@ -397,8 +454,8 @@ française. Décision à confirmer.
 Rien n'est inventé. Ces marques restent visibles dans `/styleguide` jusqu'à ce que
 l'information arrive.
 
-- `TODO:` adresse mail réelle à afficher dans le bloc contact.
-- `TODO:` dates exactes de l'alternance SATT Paris-Saclay et du poste AB Tasty.
+- `TODO:` les trois aperçus projets. L'emplacement est réservé au bon ratio, filet 1px,
+  **aucune image de remplacement** — il reste vide jusqu'à l'arrivée des visuels.
 
 ---
 
@@ -406,6 +463,8 @@ l'information arrive.
 
 ```
 DESIGN.md                      ce document — référence normative
+content/copy.js                toutes les chaînes de copie, prêtes pour une
+                               version EN — rien de rédactionnel dans le JSX
 styles/tokens.css              tokens, portée inversée, socle éditorial, primitives
                                [data-trace] et [data-reveal]
 lib/motion.js                  runtime motion : Lenis, ScrollTrigger, le tracé,
