@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import s from '../styles/Home.module.css';
 import copy from '../content/copy';
 
@@ -163,7 +164,15 @@ export default function Home() {
                     <p className={s.workNum}>{project.num}</p>
 
                     <div className={s.workMain}>
-                      <h2 className={s.workTitle}>{project.title}</h2>
+                      <h2 className={s.workTitle}>
+                        {project.href ? (
+                          <Link className={s.workLink} href={project.href}>
+                            {project.title}
+                          </Link>
+                        ) : (
+                          project.title
+                        )}
+                      </h2>
                       <p className={s.workContext}>{project.context}</p>
                       <p className={s.workSummary}>{project.summary}</p>
                     </div>
@@ -171,16 +180,15 @@ export default function Home() {
                     <div className={s.workAside}>
                       <p className={s.meta}>{project.tags.join(copy.glyph.dot)}</p>
 
+                      <p className={s.rowFigure}>{project.figure}</p>
+                      <p className={`${s.meta} ${s.rowFigureCaption}`}>
+                        {project.figureCaption}
+                      </p>
+
                       <div className={s.preview}>
                         <div className={s.previewSlot}>
                           <p className={s.todo}>TODO: {project.preview}</p>
                         </div>
-                        {project.figure ? (
-                          <div className={s.previewFoot}>
-                            <p className={`${s.figure} ${s.figureAccent}`}>{project.figure}</p>
-                            <p className={s.meta}>{project.figureCaption}</p>
-                          </div>
-                        ) : null}
                       </div>
                     </div>
                   </div>

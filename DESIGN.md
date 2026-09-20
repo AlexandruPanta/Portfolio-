@@ -292,10 +292,24 @@ Tout autre effet de survol est interdit.
 **Images** — filet 1px `--line`, angles droits, pas de grayscale-vers-couleur au survol,
 pas de parallaxe.
 
-**Chiffres** — éléments graphiques, pas du texte courant. Serif pour le résultat
-(`−56%`), mono pour la mesure (`53ms`, `120ms`), `--text-dim` pour la valeur « avant ».
+**Chiffres** — éléments graphiques, pas du texte courant. `--font-serif`, `--t-h2` en
+liste et `--t-hero` en case study, légende mono `--t-meta` en dessous. Toujours visibles :
+un chiffre est l'information, pas une récompense de survol. Chaque ligne projet en porte
+un — sinon la colonne de droite est vide.
+
+> Les chiffres sont en `--text`, **jamais en `--accent`**. Trois chiffres accentués font
+> une texture, pas un accent — même raison que pour le tracé.
 Chasse tabulaire obligatoire (`font-variant-numeric: tabular-nums`) : un compteur animé
 ne doit produire **aucun** décalage de mise en page.
+
+**Schéma** — SVG inline, 1px en `--line`, angles droits, labels mono. `--accent` ne porte
+que le **chemin critique**, et le trait s'arrête pile au bord des nœuds extrêmes : un
+trait qui dépasse laisse deux moignons sans signification. Les nœuds masquent le trait
+sous eux plutôt que de se superposer. Sous 768px, le même dessin pivote à la verticale —
+cinq labels mono ne tiennent pas sur 335px. Le `<figcaption>` énonce la chaîne en toutes
+lettres : le filet à 1.33:1 ne porte jamais l'information seul.
+
+> Si le schéma ne tient pas en 1px, on simplifie le schéma. On n'ajoute pas de style.
 
 **Adresse mail** — `--t-h2` au-dessus de 768px, `--t-h3` en dessous. 29 caractères
 débordent en `--t-h2` sous 768px. La césure est autorisée **au `@` et nulle part
@@ -435,7 +449,7 @@ toutes les sections assemblées : étape 8.
 | Case study | Template dédié : contexte / contrainte / architecture / résultat chiffré. |
 | (02) System | Stack traité comme une fiche technique, en colonnes mono. **Seule section inversée** — porte `[data-theme="invert"]`. |
 | (03) Contact | Une adresse mail en `--t-h2`, liens en mono. Pas de formulaire. Reste clair : l'adresse doit être l'élément le plus lumineux de la page. |
-| Footer | Filet 1px, mono, fuseau horaire : `PARIS — UTC+2`. |
+| Footer | Filet 1px, mono, fuseau horaire : `PARIS · CET`. Un libellé de fuseau, pas un décalage — `UTC+2` devient faux fin octobre. |
 
 **Langue** — labels meta en anglais (`(01) — SELECTED WORK`), corps de texte en
 français. Les labels sont nommés en anglais par la commande elle-même ; la cible est
@@ -449,17 +463,35 @@ française. Décision à confirmer.
 
 ---
 
-## 12 · En attente de contenu
+## 12 · Case studies
+
+Template : **contexte / problème / contrainte / architecture / résultat chiffré / stack**.
+Le label de section, le titre en `--t-hero`, le contexte démarrant colonne 5.
+
+**Confidentialité** — un CV se transmet, un site se publie. Aucun établissement, aucun
+résident, aucun système téléphonique client n'est nommé. On reste au niveau des briques
+d'infra standard.
+
+**Les `todo` sont des phrases qu'Alex écrit lui-même.** Elles ne se rédigent pas à sa
+place : l'emplacement est réservé et marqué, il reste vide.
+
+Écrits : `zoecare`. Restent : `ab-tasty`, `homelab`.
+
+---
+
+## 13 · En attente de contenu
 
 Rien n'est inventé. Ces marques restent visibles dans `/styleguide` jusqu'à ce que
 l'information arrive.
 
 - `TODO:` les trois aperçus projets. L'emplacement est réservé au bon ratio, filet 1px,
   **aucune image de remplacement** — il reste vide jusqu'à l'arrivée des visuels.
+- `TODO:` ZoeCare — *le problème* et *la contrainte*, à écrire par Alex.
+- `TODO:` ZoeCare — un second chiffre publiable pour *le résultat*, s'il en existe un.
 
 ---
 
-## 13 · Carte des fichiers
+## 14 · Carte des fichiers
 
 ```
 DESIGN.md                      ce document — référence normative
@@ -472,6 +504,8 @@ lib/motion.js                  runtime motion : Lenis, ScrollTrigger, le tracé,
 pages/_document.js             pose la classe `js` avant la peinture, précharge
                                Satoshi et JetBrains Mono
 pages/index.js                 la home — loader, nav, hero, (01) Selected work
+pages/work/zoecare.js          case study ZoeCare, schéma SVG inline
+styles/CaseStudy.module.css    habillage du template de case study
 styles/Home.module.css         habillage de la home
 pages/styleguide.js            /styleguide — vérification visuelle du système
 styles/Styleguide.module.css   habillage de la route de contrôle
@@ -495,7 +529,7 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 
 ---
 
-## 14 · Dette
+## 15 · Dette
 
 **Soldé à l'étape 1**
 
@@ -518,10 +552,10 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
   vrais aperçus projets arriveront, pour ne pas effacer un fichier encore utile.
 - La navigation ne liste que `(01) SELECTED WORK`. `(02) SYSTEM` et `(03) CONTACT` s'y
   ajoutent aux étapes 5 et 6 : un lien vers une ancre qui n'existe pas ne se livre pas.
-- Les lignes de la liste projets ne sont pas encore des liens. Elles le deviennent à
-  l'étape 4, quand les case studies existent.
+- Seule la ligne ZoeCare est un lien : c'est la seule case study écrite. AB Tasty et
+  Homelab le deviennent quand leur page existe.
 
-## 15 · Checklist avant chaque bloc
+## 16 · Checklist avant chaque bloc
 
 1. Relire §9. Aucun interdit présent ?
 2. Aucune valeur de design hors token ? `grep -nE "#[0-9A-Fa-f]{3,8}|[0-9]+(px|rem)"` sur le CSS.

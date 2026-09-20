@@ -238,8 +238,14 @@
   text-decoration-thickness: var(--underline-thickness);
 }
 
+.workLink {
+  display: contents;
+  color: inherit;
+  text-decoration: none;
+}
+
 .workRow:hover .workTitle,
-.workRow:focus-visible .workTitle {
+.workRow:focus-within .workTitle {
   /* text-decoration-line, jamais le raccourci : `text-decoration`
      réinitialise thickness et offset à `auto`. */
   text-decoration-line: underline;
@@ -274,6 +280,22 @@
   line-height: var(--leading-body);
   color: var(--text-dim);
 }
+
+/* ---- chiffre de ligne ---------------------------------------- */
+/* Toujours visible : c'est l'information, pas une récompense de survol.
+   En --text et non en --accent — trois chiffres accentués feraient une
+   texture, pas un accent. */
+
+.rowFigure {
+  margin: var(--s3) 0 0;
+  font-family: var(--font-serif);
+  font-size: var(--t-h2);
+  line-height: var(--leading-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.rowFigureCaption { margin-top: var(--s1); }
 
 /* ---- aperçu au survol ---------------------------------------- */
 /* En flux dans la colonne de droite, place réservée d'avance : aucun
