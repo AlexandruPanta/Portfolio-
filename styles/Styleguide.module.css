@@ -48,7 +48,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--gutter);
 }
 
@@ -267,7 +267,7 @@
 
 .gridDemo {
   display: grid;
-  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--gutter);
 }
 
@@ -366,7 +366,7 @@
 /* ---- responsive --------------------------------------------- */
 
 @media (max-width: 767px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .colLabel, .colContent { grid-column: 1 / -1; }
   .colLabel { margin-bottom: var(--s2); }
   .section { margin-top: var(--s6); }
@@ -375,7 +375,7 @@
   .listRow { grid-template-columns: var(--s4) 1fr; }
   .listRow > :nth-child(3) { grid-column: 2; }
   .figureRow { gap: var(--s4); }
-  .gridDemo { grid-template-columns: repeat(4, 1fr); }
+  .gridDemo { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .weightLabel { min-width: var(--s6); }
 }
 

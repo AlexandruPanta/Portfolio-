@@ -11,7 +11,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--gutter);
 }
 
@@ -154,7 +154,7 @@
   font-size: var(--t-meta);
   letter-spacing: var(--track-meta);
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text);
 }
 
 .todoText {
@@ -203,10 +203,13 @@
   vector-effect: non-scaling-stroke;
 }
 
-/* Le chemin critique, et lui seul : capteur → soignant. */
+/* Le chemin critique, et lui seul. En --text : depuis DESIGN.md §3,
+   l'accent au repos est réservé à l'adresse mail sur tout le site.
+   La hiérarchie tient quand même — trait à 17.5:1 contre nœuds à
+   1.33:1. Repasser en var(--accent) si la règle change. */
 .path {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--text);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -258,7 +261,7 @@
 /* ---- responsive --------------------------------------------------- */
 
 @media (max-width: 767px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .mastheadLabel,
   .title,
   .mastheadContext,

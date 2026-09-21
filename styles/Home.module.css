@@ -31,7 +31,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--gutter);
 }
 
@@ -97,6 +97,7 @@
 }
 
 .navMark {
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-size: var(--t-meta);
   letter-spacing: var(--track-meta);
@@ -112,6 +113,8 @@
   padding: 0;
   list-style: none;
 }
+
+.navLink { white-space: nowrap; }
 
 .navLink {
   font-family: var(--font-mono);
@@ -347,12 +350,15 @@
 
 .figureAccent { color: var(--accent); }
 
+/* --text et non --accent : l'accent au repos est réservé à l'adresse
+   mail, exclusivement (DESIGN.md §3). Le contraste à 17.5:1 sur du
+   --text-dim environnant suffit largement à rendre la marque visible. */
 .todo {
   font-family: var(--font-mono);
   font-size: var(--t-meta);
   letter-spacing: var(--track-meta);
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text);
 }
 
 /* ---- découpe en lignes (SplitText) --------------------------- */
@@ -362,7 +368,7 @@
 /* ---- responsive ---------------------------------------------- */
 
 @media (max-width: 767px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .heroLabel,
   .heroName,
   .heroLine,
@@ -387,7 +393,21 @@
     margin-top: var(--s2);
   }
 
-  .navList { gap: var(--s3); }
+  /* Sous 768px les libellés font passer la nav à trois lignes et 99px
+     de haut. Seuls les numéros restent visibles ; le libellé demeure
+     dans le nom accessible du lien. */
+  .navLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .navList { gap: var(--s2); }
   .loaderCount { font-size: var(--t-h3); }
 }
 
@@ -398,4 +418,157 @@
 
 @media (max-width: 767px) {
   .preview { width: auto; min-width: 0; opacity: 1; visibility: visible; }
+}
+
+/* ---- (02) system — seule section inversée du site ---------------- */
+/* Pleine largeur : la portée peint de bord à bord, le contenu garde
+   ses marges. */
+
+.system { padding-block: var(--s7); }
+
+.systemHead { margin-bottom: var(--s6); }
+
+.systemLabel { grid-column: 1 / span 3; }
+
+.systemIntro {
+  grid-column: 5 / span 7;
+  margin: 0;
+  font-size: var(--t-h3);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--text);
+}
+
+/* Fiche technique : une ligne par groupe, label à gauche, valeurs à
+   droite. Du texte en colonnes mono — pas de barre, pas de logo.
+   Pistes en minmax(0, 1fr) : en `1fr` le minimum automatique est le
+   min-content, et la ligne « Infra », plus fournie, élargissait ses
+   colonnes de valeurs au détriment du label. Les cinq lignes doivent
+   partager exactement la même grille. */
+.specRow {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  gap: var(--gutter);
+  padding-block: var(--s3);
+  border-top: var(--border);
+}
+
+.specRow:last-child { border-bottom: var(--border); }
+
+.specLabel { grid-column: 1 / span 3; }
+
+.specItems {
+  grid-column: 5 / span 8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1) var(--s3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.specItem {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* ---- (03) contact ------------------------------------------------- */
+
+.contact { padding-block: var(--s7); }
+
+.contactHead { margin-bottom: var(--s6); }
+
+.contactLabel { grid-column: 1 / span 3; }
+
+/* Pleine largeur : l'adresse fait 899px en --t-h2 à 1440, elle ne tient
+   pas dans huit colonnes. */
+.contactBody { grid-column: 1 / -1; }
+
+/* Le seul élément du site en --accent au repos. */
+.contactEmail {
+  display: inline-block;
+  margin: 0;
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  color: var(--accent);
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: var(--underline-thickness);
+  /* césure au @ et nulle part ailleurs : la partie locale ne se coupe
+     jamais au milieu */
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+.contactEmail:hover,
+.contactEmail:focus-visible {
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+}
+
+.contactStatus { margin-top: var(--s4); }
+
+.contactLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s4);
+  margin: var(--s3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contactLink {
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: var(--underline-thickness);
+}
+
+.contactLink:hover,
+.contactLink:focus-visible {
+  color: var(--text);
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+}
+
+/* ---- footer -------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s2) var(--s3);
+  padding-block: var(--s4) var(--s6);
+  border-top: var(--border);
+}
+
+@media (max-width: 767px) {
+  .systemLabel,
+  .systemIntro,
+  .specLabel,
+  .specItems,
+  .contactLabel,
+  .contactBody { grid-column: 1 / -1; }
+
+  .specRow { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s2); }
+  .specLabel { margin-bottom: var(--s1); }
+
+  .system { padding-block: var(--s6); }
+  .contact { padding-block: var(--s6); }
+  .systemHead,
+  .contactHead { margin-bottom: var(--s5); }
+  .systemIntro { margin-top: var(--s4); }
+
+  .contactEmail { font-size: var(--t-h3); }
 }

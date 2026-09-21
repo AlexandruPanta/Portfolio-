@@ -127,6 +127,13 @@ un anneau de focus à **2.46:1** sur fond noir — sous le 3:1 exigé.
 
 1. **La typographie EST le visuel.** Zéro illustration décorative.
 2. **Un seul accent couleur**, 3 apparitions maximum sur la page d'accueil.
+
+   > Le plafond de 3 compte les apparitions **au repos**. Survol, focus et états
+   > transitoires sont des états : ils ne consomment pas le budget.
+
+   Au repos, l'accent est réservé à **l'adresse mail**, exclusivement. Rien d'autre sur
+   le site ne porte `--accent` au repos — ni les chiffres, ni les marques `TODO:`, ni le
+   chemin critique des schémas.
 3. **La structure se fait au filet 1px et au vide.** Jamais à l'ombre, jamais à la carte.
 4. **Chaque section porte un label meta** en mono minuscule : `(01) — SELECTED WORK`.
 5. **Le vide est un élément de design** : 160px minimum entre sections desktop, 96px mobile.
@@ -233,9 +240,14 @@ tiennent pas dans 335px de contenu.
 meta occupe les colonnes **1 à 3**, le contenu démarre **colonne 5**. La colonne 4 reste
 vide — le décalage d'une colonne est l'accident délibéré.
 
-Toute piste `1fr` porte un `min-width: 0` : sans lui une colonne de grille refuse de se
-comprimer sous la largeur de son contenu et fait déborder la page. Les chaînes mono
-longues portent `overflow-wrap: anywhere`.
+> Les pistes se déclarent en `minmax(0, 1fr)`, jamais en `1fr`. En `1fr` le minimum
+> automatique d'une piste est son contenu : une ligne plus fournie élargit ses colonnes
+> au détriment des autres, et deux lignes censées partager la même grille dérivent. La
+> fiche technique du (02) perdait 16px sur sa colonne de label entre la première ligne
+> et la quatrième.
+
+Les enfants de grille portent en plus un `min-width: 0`, et les chaînes mono longues un
+`overflow-wrap: anywhere`.
 
 ### Langue
 
@@ -443,13 +455,13 @@ toutes les sections assemblées : étape 8.
 | Bloc | Contenu |
 |---|---|
 | Loader | Compteur % en mono sur `--bg`. 1.2s max. |
-| Nav | Filet 1px en bas, mono 11px uppercase, pas de logo image. |
+| Nav | Filet 1px en bas, mono 11px uppercase, pas de logo image. Sous 768px seuls les numéros restent visibles — les libellés passaient la nav à trois lignes et 99px de haut. Le libellé demeure dans le nom accessible du lien. |
 | Hero | `(00) — ALEX PANTA` / nom en `--t-hero` / une ligne de positionnement / lieu + année en mono. Rien d'autre. Pas de bouton. |
 | (01) Work | 3 projets en liste éditoriale : ligne, numéro, titre, année, tags mono. Pas de cartes. Le survol révèle l'aperçu. Reste sur papier. |
 | Case study | Template dédié : contexte / contrainte / architecture / résultat chiffré. |
-| (02) System | Stack traité comme une fiche technique, en colonnes mono. **Seule section inversée** — porte `[data-theme="invert"]`. |
-| (03) Contact | Une adresse mail en `--t-h2`, liens en mono. Pas de formulaire. Reste clair : l'adresse doit être l'élément le plus lumineux de la page. |
-| Footer | Filet 1px, mono, fuseau horaire : `PARIS · CET`. Un libellé de fuseau, pas un décalage — `UTC+2` devient faux fin octobre. |
+| (02) System | Fiche technique en colonnes mono, une ligne par groupe. **Seule section inversée** du site — porte `[data-theme="invert"]`, pleine largeur. Pas de barre de niveau, pas de logo, pas d'icône. |
+| (03) Contact | Bloc **pleine largeur** : l'adresse fait 1034px en `--t-h2` à 1440, elle ne tient pas dans huit colonnes. Adresse en `--accent`, statut et liens en mono. Pas de formulaire. |
+| Footer | Filet 1px, mono : `ALEX PANTA · PARIS · 2026` et les mentions `Alexandru Panta`. Pas de fuseau horaire — `CET`/`CEST` est la même imprécision qu'un décalage codé en dur, et un fuseau en footer ne dit rien que `PARIS · 2026` ne dise déjà. |
 
 **Langue** — labels meta en anglais (`(01) — SELECTED WORK`), corps de texte en
 français. Les labels sont nommés en anglais par la commande elle-même ; la cible est
@@ -475,7 +487,12 @@ d'infra standard.
 **Les `todo` sont des phrases qu'Alex écrit lui-même.** Elles ne se rédigent pas à sa
 place : l'emplacement est réservé et marqué, il reste vide.
 
-Écrits : `zoecare`. Restent : `ab-tasty`, `homelab`.
+**Règle éditoriale du (02) SYSTEM** — la section ne liste **que** ce qui apparaît dans un
+case study. Pas de recopie de CV, pas de techno sans preuve derrière. Si ça n'est pas
+dans une des trois pages, ça ne s'affiche pas.
+
+Les trois pages sortent d'un seul gabarit : `pages/work/[slug].js`, alimenté par
+`content/copy.js`. Zéro variation possible — il n'y a qu'un composant.
 
 ---
 
@@ -486,8 +503,12 @@ l'information arrive.
 
 - `TODO:` les trois aperçus projets. L'emplacement est réservé au bon ratio, filet 1px,
   **aucune image de remplacement** — il reste vide jusqu'à l'arrivée des visuels.
-- `TODO:` ZoeCare — *le problème* et *la contrainte*, à écrire par Alex.
-- `TODO:` ZoeCare — un second chiffre publiable pour *le résultat*, s'il en existe un.
+- `TODO:` ZoeCare — *le problème*, *la contrainte*, et un second chiffre publiable.
+- `TODO:` AB Tasty — *le problème*, *la contrainte*, et la chaîne du tag si elle est
+  publiable. Sans elle, pas de schéma : le gabarit en accepte un, on ne l'invente pas.
+- `TODO:` Homelab — *le problème*, *la contrainte*, *l'architecture* et *le résultat*.
+  Quatre sur cinq : la page existe et le gabarit tient, mais elle n'est pas publiable
+  en l'état.
 
 ---
 
@@ -504,7 +525,9 @@ lib/motion.js                  runtime motion : Lenis, ScrollTrigger, le tracé,
 pages/_document.js             pose la classe `js` avant la peinture, précharge
                                Satoshi et JetBrains Mono
 pages/index.js                 la home — loader, nav, hero, (01) Selected work
-pages/work/zoecare.js          case study ZoeCare, schéma SVG inline
+pages/work/[slug].js           gabarit unique des trois case studies, schéma
+                               SVG inline. getStaticPaths + getStaticProps,
+                               les trois pages sont prérendues.
 styles/CaseStudy.module.css    habillage du template de case study
 styles/Home.module.css         habillage de la home
 pages/styleguide.js            /styleguide — vérification visuelle du système
@@ -550,10 +573,8 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 
 - `public/` contient encore 21 images et vidéos de l'ancien site. À supprimer quand les
   vrais aperçus projets arriveront, pour ne pas effacer un fichier encore utile.
-- La navigation ne liste que `(01) SELECTED WORK`. `(02) SYSTEM` et `(03) CONTACT` s'y
-  ajoutent aux étapes 5 et 6 : un lien vers une ancre qui n'existe pas ne se livre pas.
-- Seule la ligne ZoeCare est un lien : c'est la seule case study écrite. AB Tasty et
-  Homelab le deviennent quand leur page existe.
+- La navigation liste les trois sections ; les trois ancres existent.
+- Les trois lignes projet sont de vrais `<a>`, vers les trois case studies.
 
 ## 16 · Checklist avant chaque bloc
 

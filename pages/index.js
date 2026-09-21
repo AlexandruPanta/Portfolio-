@@ -113,11 +113,13 @@ export default function Home() {
           </a>
           <nav aria-label={copy.nav.sectionsLabel}>
             <ul className={s.navList}>
-              <li>
-                <a className={s.navLink} href="#work">
-                  {copy.work.index} {copy.work.label}
-                </a>
-              </li>
+              {copy.nav.items.map((item) => (
+                <li key={item.href}>
+                  <a className={s.navLink} href={item.href}>
+                    {item.index} <span className={s.navLabel}>{item.label}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </nav>
         </header>
@@ -165,13 +167,9 @@ export default function Home() {
 
                     <div className={s.workMain}>
                       <h2 className={s.workTitle}>
-                        {project.href ? (
-                          <Link className={s.workLink} href={project.href}>
-                            {project.title}
-                          </Link>
-                        ) : (
-                          project.title
-                        )}
+                        <Link className={s.workLink} href={project.href}>
+                          {project.title}
+                        </Link>
                       </h2>
                       <p className={s.workContext}>{project.context}</p>
                       <p className={s.workSummary}>{project.summary}</p>
@@ -197,7 +195,79 @@ export default function Home() {
               <div className={s.workSeparator} data-trace />
             </div>
           </section>
+
+          {/* ---------- (02) system ---------- */}
+          <section id="system" data-theme="invert" className={s.system} data-trace-group>
+            <div className={s.shell}>
+              <div className={`${s.grid} ${s.systemHead}`}>
+                <p className={`${s.meta} ${s.systemLabel}`} data-reveal>
+                  {copy.system.index} —{' '}
+                  <span className={s.metaStrong}>{copy.system.label}</span>
+                </p>
+                <p className={s.systemIntro} data-reveal-lines>
+                  {copy.system.intro}
+                </p>
+              </div>
+
+              <div>
+                {copy.system.groups.map((group) => (
+                  <div key={group.label} className={s.specRow} data-trace>
+                    <p className={`${s.meta} ${s.specLabel}`}>{group.label}</p>
+                    <ul className={s.specItems}>
+                      {group.items.map((item) => (
+                        <li key={item} className={s.specItem}>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ---------- (03) contact ---------- */}
+          <section id="contact" className={`${s.shell} ${s.contact}`} data-trace-group>
+            <div className={`${s.grid} ${s.contactHead}`}>
+              <p className={`${s.meta} ${s.contactLabel}`} data-reveal>
+                {copy.contact.index} —{' '}
+                <span className={s.metaStrong}>{copy.contact.label}</span>
+              </p>
+            </div>
+
+            <div className={s.grid}>
+              <div className={s.contactBody}>
+                <a className={s.contactEmail} href={`mailto:${copy.contact.email}`}>
+                  {copy.contact.emailLocal}
+                  <wbr />
+                  {copy.contact.emailDomain}
+                </a>
+
+                <p className={`${s.meta} ${s.contactStatus}`}>{copy.contact.status}</p>
+
+                <ul className={s.contactLinks}>
+                  {copy.contact.links.map((link) => (
+                    <li key={link.href}>
+                      <a
+                        className={s.contactLink}
+                        href={link.href}
+                        rel="noreferrer noopener"
+                        target="_blank"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
         </main>
+
+        <footer className={`${s.shell} ${s.footer}`}>
+          <p className={s.meta}>{copy.footer.line}</p>
+          <p className={s.meta}>{copy.footer.legalName}</p>
+        </footer>
       </div>
     </>
   );
