@@ -627,10 +627,12 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 
 **Restant**
 
-- `public/` contient encore 21 images et vidéos de l'ancien site. À supprimer quand les
-  vrais aperçus projets arriveront, pour ne pas effacer un fichier encore utile.
+- **Soldé** — les 21 images et vidéos de l'ancien site sont supprimées (25 Mo), ainsi
+  que la police Agbalumo qui n'était plus chargée. `public/` pèse 272 ko.
+  Le favicon était encore celui du tout premier portfolio : régénéré depuis `icon.svg`.
 - La navigation liste les trois sections ; les trois ancres existent.
-- Les trois lignes projet sont de vrais `<a>`, vers les trois case studies.
+- ZoeCare et AB Tasty sont de vrais `<a>`. Homelab n'a pas de page : sa ligne reste,
+  sans lien et sans état de survol.
 
 ## 17 · Checklist avant chaque bloc
 
