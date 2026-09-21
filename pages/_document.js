@@ -10,21 +10,11 @@ export default function Document() {
     <Html lang="fr">
       <Head>
         <meta charSet="utf-8" />
-        <link rel="icon" href="/favicon.ico" />
-        <link
-          rel="preload"
-          href="/fonts/Satoshi-Variable.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/JetBrainsMono-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
+        {/* Le filet 1px du site, réduit à 32px. */}
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {/* next/font précharge les woff2 lui-même : pas de <link> manuel. */}
         <script dangerouslySetInnerHTML={{ __html: JS_GATE }} />
       </Head>
       <body>

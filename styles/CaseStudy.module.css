@@ -85,7 +85,9 @@
   transform: translateY(-200%);
 }
 
-.skipLink:focus-visible { transform: none; }
+/* :focus et pas :focus-visible — un lien d'évitement doit apparaître
+   dès qu'il reçoit le focus, quelle que soit l'heuristique du navigateur. */
+.skipLink:focus { transform: none; }
 
 /* ---- titre ---------------------------------------------------- */
 
@@ -113,9 +115,13 @@
 
 /* ---- sections ------------------------------------------------- */
 
-.section {
-  padding-block: var(--s7);
+/* Le filet vit dans son propre élément : [data-trace] applique un
+   scaleX, il ne doit porter que le trait, jamais la section entière. */
+.section { padding-block: 0 var(--s7); }
+
+.sectionRule {
   border-top: var(--border);
+  margin-bottom: var(--s7);
 }
 
 .sectionLabel { grid-column: 1 / span 3; }
@@ -179,51 +185,47 @@
 
 .figureBlock { margin-bottom: var(--s5); }
 
-/* ---- schéma ---------------------------------------------------- */
+/* ---- schéma ------------------------------------------------------ */
+/* En HTML, pas en SVG : le texte d'un SVG à viewBox se met à l'échelle
+   avec le conteneur et tombait sous --t-meta (≈6px à 1028). Ici les
+   labels valent 11px partout, comme le reste de l'échelle. */
 
-.diagram {
-  margin: var(--s6) 0 0;
-  padding-top: var(--s4);
-  border-top: var(--border);
+/* La chaîne ouvre la section : elle dit le quoi, la prose qui suit dit
+   le pourquoi. Pas de filet au-dessus — le titre la porte déjà. */
+.chain {
+  display: flex;
+  margin: 0 0 var(--s5);
+  padding: 0;
+  list-style: none;
 }
 
-.diagramSvg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.diagramSvgMobile { display: none; }
-
-.node {
-  fill: none;
-  stroke: var(--line);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-/* Le chemin critique, et lui seul. En --text : depuis DESIGN.md §3,
-   l'accent au repos est réservé à l'adresse mail sur tout le site.
-   La hiérarchie tient quand même — trait à 17.5:1 contre nœuds à
-   1.33:1. Repasser en var(--accent) si la règle change. */
-.path {
-  fill: none;
-  stroke: var(--text);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.nodeLabel {
+.chainStep {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--s2) var(--s1);
+  border: var(--border);
+  border-radius: var(--radius);
   font-family: var(--font-mono);
   font-size: var(--t-meta);
+  line-height: var(--leading-body);
   letter-spacing: var(--track-meta);
   text-transform: uppercase;
-  fill: var(--text);
+  text-align: center;
+  color: var(--text);
 }
 
-.diagramCaption {
-  margin-top: var(--s3);
+.chainStep + .chainStep { margin-left: var(--s4); }
+
+/* Connecteur : un filet 1px, aucun glyphe de flèche. L'ordre est porté
+   par la liste ordonnée, pas par un dessin. */
+.chainStep:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: var(--s4);
+  border-top: 1px solid var(--text);
 }
 
 /* ---- stack ------------------------------------------------------ */
@@ -269,13 +271,22 @@
   .sectionBody { grid-column: 1 / -1; }
 
   .masthead { padding-block: var(--s6) var(--s5); }
-  .section { padding-block: var(--s6); }
+  .section { padding-block: 0 var(--s6); }
+  .sectionRule { margin-bottom: var(--s6); }
   .mastheadContext { margin-top: var(--s4); }
   .sectionLabel { margin-bottom: var(--s2); }
   .sectionTitle { font-size: var(--t-h3); }
   .figure { font-size: var(--t-h2); }
 
   /* cinq labels mono ne tiennent pas sur 335px : la chaîne se redresse */
-  .diagramSvg { display: none; }
-  .diagramSvgMobile { display: block; }
+  .chain { flex-direction: column; }
+  .chainStep + .chainStep { margin-left: 0; margin-top: var(--s4); }
+  .chainStep:not(:last-child)::after {
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: var(--s4);
+    border-top: none;
+    border-left: 1px solid var(--text);
+  }
 }

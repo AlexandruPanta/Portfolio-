@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import Meta from '../components/Meta';
 import s from '../styles/Home.module.css';
 import copy from '../content/copy';
-
-/* GSAP + Lenis ne servent pas au premier rendu : ils sont chargés après
-   l'hydratation pour rester hors du JS initial (budget 150 kB gzip).
-   Aucun état masqué n'est posé avant qu'ils ne soient là — voir §8. */
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+import {
+  loaderHasAlreadyPlayed,
+  markLoaderPlayed,
+  prefersReducedMotion,
+  useIsomorphicLayoutEffect,
+  useSiteMotion,
+} from '../lib/useSiteMotion';
 
 /* Loader — compteur % en mono. 1.2s au maximum, jamais davantage. */
 function Loader({ onDone }) {
@@ -50,59 +50,37 @@ function Loader({ onDone }) {
 
 export default function Home() {
   const scopeRef = useRef(null);
-  const motionRef = useRef(null);
-  const primedRef = useRef(false);
 
+  /* Le loader ne joue qu'au premier chargement réel. En navigation
+     client — retour depuis un case study — le module est déjà évalué,
+     le drapeau tient, et on entre directement sur la page. */
   const [loading, setLoading] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [motionLoaded, setMotionLoaded] = useState(false);
+  const [ready, setReady] = useState(true);
 
-  const finishLoader = useCallback(() => setReady(true), []);
-
-  useEffect(() => {
-    if (prefersReducedMotion()) setReady(true);
-    else setLoading(true);
+  const finishLoader = useCallback(() => {
+    markLoaderPlayed();
+    setReady(true);
   }, []);
 
-  /* Le chargement part dès le montage, en parallèle du loader : sur un
-     réseau correct, motion.js est prêt bien avant la levée du loader. */
-  useEffect(() => {
-    if (prefersReducedMotion()) return undefined;
-    let cancelled = false;
-    import('../lib/motion').then((mod) => {
-      if (cancelled) return;
-      motionRef.current = mod;
-      setMotionLoaded(true);
-    });
-    return () => {
-      cancelled = true;
-    };
+  useIsomorphicLayoutEffect(() => {
+    if (prefersReducedMotion() || loaderHasAlreadyPlayed()) {
+      markLoaderPlayed();
+      return;
+    }
+    setReady(false);
+    setLoading(true);
   }, []);
 
-  /* Masquer pendant que le loader couvre l'écran : invisible, donc sûr.
-     S'il est déjà levé, on ne prime pas — `start` ne touchera alors
-     qu'aux éléments hors écran. */
-  useEffect(() => {
-    if (!motionLoaded || ready || !scopeRef.current) return;
-    primedRef.current = motionRef.current.prime(scopeRef.current);
-  }, [motionLoaded, ready]);
-
-  useEffect(() => {
-    if (!ready || !motionLoaded || !scopeRef.current) return undefined;
-    return motionRef.current.start(scopeRef.current, { primed: primedRef.current });
-  }, [ready, motionLoaded]);
+  useSiteMotion(scopeRef, ready);
 
   return (
     <>
-      <Head>
-        <title>{copy.head.title}</title>
-        <meta name="description" content={copy.head.description} />
-      </Head>
+      <Meta {...copy.head} />
 
       {loading && !ready ? <Loader onDone={finishLoader} /> : null}
 
       <div data-editorial className={s.page} ref={scopeRef}>
-        <a className={s.skipLink} href="#work">
+        <a className={s.skipLink} href="#top">
           {copy.nav.skip}
         </a>
 
@@ -166,10 +144,16 @@ export default function Home() {
                     <p className={s.workNum}>{project.num}</p>
 
                     <div className={s.workMain}>
+                      {/* Homelab n'a pas de page : la ligne reste, sans lien
+                          et donc sans état de survol. */}
                       <h2 className={s.workTitle}>
-                        <Link className={s.workLink} href={project.href}>
-                          {project.title}
-                        </Link>
+                        {project.href ? (
+                          <Link className={s.workLink} href={project.href}>
+                            {project.title}
+                          </Link>
+                        ) : (
+                          project.title
+                        )}
                       </h2>
                       <p className={s.workContext}>{project.context}</p>
                       <p className={s.workSummary}>{project.summary}</p>
@@ -185,7 +169,7 @@ export default function Home() {
 
                       <div className={s.preview}>
                         <div className={s.previewSlot}>
-                          <p className={s.todo}>TODO: {project.preview}</p>
+                          <p className={s.todo}>{project.preview}</p>
                         </div>
                       </div>
                     </div>

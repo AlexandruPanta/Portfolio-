@@ -152,7 +152,9 @@
   transform: translateY(-200%);
 }
 
-.skipLink:focus-visible { transform: none; }
+/* :focus et pas :focus-visible — un lien d'évitement doit apparaître
+   dès qu'il reçoit le focus, quelle que soit l'heuristique du navigateur. */
+.skipLink:focus { transform: none; }
 
 /* ---- hero ---------------------------------------------------- */
 
@@ -241,14 +243,17 @@
   text-decoration-thickness: var(--underline-thickness);
 }
 
+/* Le survol vit sur le lien, pas sur la ligne : une ligne sans page ne
+   doit pas se souligner comme si elle menait quelque part. */
 .workLink {
-  display: contents;
   color: inherit;
   text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: var(--underline-thickness);
 }
 
-.workRow:hover .workTitle,
-.workRow:focus-within .workTitle {
+.workRow:hover .workLink,
+.workLink:focus-visible {
   /* text-decoration-line, jamais le raccourci : `text-decoration`
      réinitialise thickness et offset à `auto`. */
   text-decoration-line: underline;
@@ -512,7 +517,12 @@
   text-decoration-color: var(--accent);
 }
 
-.contactStatus { margin-top: var(--s4); }
+/* --text et non --text-dim : c'est le deuxième message du site, juste
+   après l'adresse. */
+.contactStatus {
+  margin-top: var(--s4);
+  color: var(--text);
+}
 
 .contactLinks {
   display: flex;

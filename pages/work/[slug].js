@@ -1,100 +1,24 @@
-import Head from 'next/head';
+import { useRef } from 'react';
 import Link from 'next/link';
+import Meta from '../../components/Meta';
 import s from '../../styles/CaseStudy.module.css';
 import copy from '../../content/copy';
+import { useSiteMotion } from '../../lib/useSiteMotion';
 
 const studies = Object.values(copy.caseStudies);
 
-/* Schéma horizontal — les nœuds d'une chaîne sur une seule ligne.
-   1px partout, angles droits, labels mono. Le chemin critique est le
-   trait continu qui relie le premier nœud au dernier ; il s'arrête pile
-   à leur bord, un trait qui dépasse laissant deux moignons sans
-   signification. Les nœuds masquent le trait sous eux. */
-function DiagramWide({ nodes }) {
-  const W = 1000;
-  const Y = 34;
-  const BOX_H = 34;
-  const gap = W / nodes.length;
-
+/* Chaîne d'architecture — une liste ordonnée, pas un dessin.
+   L'ordre est porté par le <ol> ; les connecteurs sont des filets 1px
+   en ::after, sans glyphe de flèche. */
+function Chain({ steps }) {
   return (
-    <svg
-      className={s.diagramSvg}
-      viewBox={`0 0 ${W} 96`}
-      preserveAspectRatio="xMidYMid meet"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path className={s.path} d={`M 14 ${Y} H ${W - 14}`} />
-
-      {nodes.map((label, i) => {
-        const cx = gap * i + gap / 2;
-        const halfW = gap / 2 - 14;
-        return (
-          <g key={label}>
-            <rect
-              x={cx - halfW}
-              y={Y - BOX_H / 2}
-              width={halfW * 2}
-              height={BOX_H}
-              fill="var(--bg)"
-              stroke="none"
-            />
-            <rect className={s.node} x={cx - halfW} y={Y - BOX_H / 2} width={halfW * 2} height={BOX_H} />
-            {i < nodes.length - 1 ? (
-              <path
-                className={s.path}
-                d={`M ${cx + halfW + 10} ${Y - 5} L ${cx + halfW + 15} ${Y} L ${cx + halfW + 10} ${Y + 5}`}
-              />
-            ) : null}
-            <text className={s.nodeLabel} x={cx} y={Y + 4} textAnchor="middle">
-              {label.toUpperCase()}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-/* Même dessin, pivoté : cinq labels mono ne tiennent pas sur 335px. */
-function DiagramTall({ nodes }) {
-  const W = 320;
-  const BOX_H = 34;
-  const STEP = 58;
-  const H = STEP * (nodes.length - 1) + BOX_H;
-  const CX = W / 2;
-
-  return (
-    <svg
-      className={s.diagramSvgMobile}
-      viewBox={`0 0 ${W} ${H}`}
-      preserveAspectRatio="xMidYMin meet"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path className={s.path} d={`M ${CX} ${BOX_H / 2} V ${STEP * (nodes.length - 1) + BOX_H / 2}`} />
-
-      {nodes.map((label, i) => {
-        const cy = STEP * i + BOX_H / 2;
-        return (
-          <g key={label}>
-            <rect x={0} y={cy - BOX_H / 2} width={W} height={BOX_H} fill="var(--bg)" stroke="none" />
-            <rect className={s.node} x={0} y={cy - BOX_H / 2} width={W} height={BOX_H} />
-            {i < nodes.length - 1 ? (
-              <path
-                className={s.path}
-                d={`M ${CX - 5} ${cy + BOX_H / 2 + 12} L ${CX} ${cy + BOX_H / 2 + 17} L ${CX + 5} ${
-                  cy + BOX_H / 2 + 12
-                }`}
-              />
-            ) : null}
-            <text className={s.nodeLabel} x={CX} y={cy + 4} textAnchor="middle">
-              {label.toUpperCase()}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+    <ol className={s.chain}>
+      {steps.map((step) => (
+        <li key={step} className={s.chainStep}>
+          {step}
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -110,14 +34,17 @@ function Todo({ text }) {
 }
 
 export default function CaseStudy({ study }) {
+  const scopeRef = useRef(null);
+  /* Pas de loader sur un case study : il n'appartient qu'à l'entrée du
+     site. `ready` est donc vrai d'emblée, et seul le hors-écran est
+     masqué. */
+  useSiteMotion(scopeRef, true);
+
   return (
     <>
-      <Head>
-        <title>{study.head.title}</title>
-        <meta name="description" content={study.head.description} />
-      </Head>
+      <Meta {...study.head} />
 
-      <div data-editorial className={s.page}>
+      <div data-editorial className={s.page} ref={scopeRef}>
         <a className={s.skipLink} href="#study">
           {copy.nav.skip}
         </a>
@@ -148,9 +75,14 @@ export default function CaseStudy({ study }) {
           </section>
 
           {study.sections.map((section) => (
-            <section key={section.num} className={`${s.shell} ${s.section}`}>
+            <section
+              key={section.num}
+              className={`${s.shell} ${s.section}`}
+              data-trace-group
+            >
+              <div className={s.sectionRule} data-trace />
               <div className={s.grid}>
-                <p className={`${s.meta} ${s.sectionLabel}`}>
+                <p className={`${s.meta} ${s.sectionLabel}`} data-reveal>
                   ({section.num}) — <span className={s.metaStrong}>{section.title}</span>
                 </p>
 
@@ -164,31 +96,24 @@ export default function CaseStudy({ study }) {
                     </div>
                   ) : null}
 
+                  {section.chain ? <Chain steps={section.chain} /> : null}
+
                   {(section.body || []).map((line) => (
-                    <p key={line.slice(0, 24)} className={s.paragraph}>
+                    <p key={line.slice(0, 24)} className={s.paragraph} data-reveal-lines>
                       {line}
                     </p>
                   ))}
 
                   {section.todo ? <Todo text={section.todo} /> : null}
-
-                  {section.diagram ? (
-                    <figure className={s.diagram}>
-                      <DiagramWide nodes={section.diagram.nodes} />
-                      <DiagramTall nodes={section.diagram.nodes} />
-                      <figcaption className={`${s.meta} ${s.diagramCaption}`}>
-                        {section.diagram.caption}
-                      </figcaption>
-                    </figure>
-                  ) : null}
                 </div>
               </div>
             </section>
           ))}
 
-          <section className={`${s.shell} ${s.section}`}>
+          <section className={`${s.shell} ${s.section}`} data-trace-group>
+            <div className={s.sectionRule} data-trace />
             <div className={s.grid}>
-              <p className={`${s.meta} ${s.sectionLabel}`}>
+              <p className={`${s.meta} ${s.sectionLabel}`} data-reveal>
                 ({copy.caseStudy.stackNum}) —{' '}
                 <span className={s.metaStrong}>{copy.caseStudy.stackLabel}</span>
               </p>

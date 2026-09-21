@@ -21,6 +21,8 @@ const zoecare = {
     title: 'ZoeCare / ZoeFall — Alex Panta',
     description:
       'Plateforme IoT de détection de chute et de présence en EHPAD : capteurs, passerelle Raspberry Pi, couche données Hot/Cold, moteur d’alerte multi-canal. Déployée en production dans 2 EHPAD.',
+    path: '/work/zoecare',
+    ogImage: '/og/zoecare.png',
   },
   sections: [
     {
@@ -37,15 +39,13 @@ const zoecare = {
     {
       num: '03',
       title: 'L’architecture',
+      chain: ['Capteur', 'Passerelle', 'Données', 'Alerte', 'Soignant'],
       body: [
-        'Capteurs → passerelle Raspberry Pi → MQTT → couche données Hot/Cold (Cassandra temps réel / Supabase persistant, RLS) → moteur d’alerte multi-canal avec routage par zone et par soignant → applications mobiles Flutter + dashboards React/Metabase.',
-        'Infra OVH : Nginx reverse proxy SSL/TLS, services en systemd, VPN WireGuard pour la maintenance (SSH entrant supprimé).',
-        'Flotte Raspberry Pi mise à jour en OTA signée SHA-256 avec rollback automatique.',
+        'Le schéma montre le chemin d’une alerte, du capteur au soignant. Trois décisions le tiennent.',
+        'Les données capteurs sont stockées en deux niveaux : Cassandra absorbe le flux temps réel, Supabase garde ce qui doit durer, sous un modèle de sécurité en Row-Level Security. C’est un arbitrage coût/performance, pas une préférence d’outil.',
+        'La flotte Raspberry Pi se met à jour à distance, en OTA signée SHA-256, conformément aux exigences SSI. Une mise à jour qui échoue revient d’elle-même à la version précédente : une passerelle en panne, c’est une zone qui n’est plus surveillée.',
+        'Aucun port SSH n’est ouvert en entrée. La maintenance passe par un VPN WireGuard, les services tournent sous systemd derrière un reverse proxy Nginx en SSL/TLS, sur OVH.',
       ],
-      diagram: {
-        caption: 'Chemin critique : capteur → passerelle → données → alerte → soignant.',
-        nodes: ['Capteur', 'Passerelle', 'Données', 'Alerte', 'Soignant'],
-      },
     },
     {
       num: '04',
@@ -74,6 +74,8 @@ const abTasty = {
     title: 'AB Tasty — EmotionsAI — Alex Panta',
     description:
       'Optimisation du tag de tracking EmotionsAI : blocking time ramené de 120 ms à 53 ms sur le chemin critique de chargement des sites clients.',
+    path: '/work/ab-tasty',
+    ogImage: '/og/ab-tasty.png',
   },
   sections: [
     {
@@ -89,11 +91,8 @@ const abTasty = {
     {
       num: '03',
       title: 'L’architecture',
-      body: [
-        'Tag de tracking EmotionsAI, sur le chemin critique du chargement des pages clientes.',
-      ],
       todo:
-        'à écrire — la chaîne exacte du tag, si elle est publiable. Sans elle, pas de schéma : le gabarit en accepte un, je ne l’invente pas.',
+        'à écrire — le chemin critique du chargement. Pas de chaîne fournie, donc pas de schéma : le gabarit en accepte un, il ne l’invente pas.',
     },
     {
       num: '04',
@@ -106,57 +105,32 @@ const abTasty = {
   stack: ['JavaScript', 'Python', 'Jupyter', 'BigQuery', 'SQL', 'Django', 'MySQL'],
 };
 
+/* Homelab n'a pas de case study : quatre sections sur cinq seraient des
+   TODO, il n'y a pas de page à écrire. Seul ce que la ligne de la home
+   utilise subsiste. */
 const homelab = {
-  slug: 'homelab',
-  index: '(03)',
-  label: 'Case study',
   title: 'Homelab',
   context: 'Projet personnel · En cours',
   tags: ['Debian', 'Réseau', 'VPN'],
-  head: {
-    title: 'Homelab — Alex Panta',
-    description:
-      'iMac 2009 en serveur Debian : média, réseau, VPN. L’infrastructure que je fais aujourd’hui en production, je l’ai apprise dessus.',
-  },
-  sections: [
-    {
-      num: '01',
-      title: 'Le problème',
-      todo: 'à écrire — pourquoi recycler cette machine plutôt qu’en louer une.',
-    },
-    {
-      num: '02',
-      title: 'La contrainte',
-      todo: 'à écrire — ce qu’impose une machine de 2009.',
-    },
-    {
-      num: '03',
-      title: 'L’architecture',
-      body: [
-        'iMac 2009 sous Debian. Trois services : média, réseau, VPN.',
-      ],
-      todo:
-        'à écrire — comment les services sont arrangés. Ta consigne n’en donnait pas et je n’invente pas de topologie.',
-    },
-    {
-      num: '04',
-      title: 'Le résultat',
-      figure: '17 ans',
-      figureCaption: 'En service depuis 2009',
-      body: [
-        'L’infrastructure que je fais aujourd’hui en production, je l’ai apprise dessus.',
-      ],
-      todo: 'à écrire — ce que la machine tient réellement aujourd’hui.',
-    },
-  ],
-  stack: ['Debian', 'Nginx', 'systemd', 'WireGuard', 'Docker'],
 };
 
 export const fr = {
+  /* Le site sera collé dans LinkedIn et dans des mails : l'aperçu est la
+     première chose qu'un recruteur voit. */
+  site: {
+    name: 'Alex Panta',
+    /* TODO: DOMAINE — l'URL canonique et les og:image absolues en
+       dépendent. LinkedIn refuse une og:image relative. */
+    origin: 'TODO: DOMAINE',
+    locale: 'fr_FR',
+  },
+
   head: {
     title: 'Alex Panta — Systèmes connectés, du capteur à la production',
     description:
       'Alex Panta, développeur full-stack orienté systèmes : IoT et embarqué, backend, sécurité. Plateforme IoT de détection de chute, optimisation de performance, infrastructure auto-hébergée.',
+    path: '/',
+    ogImage: '/og/home.png',
   },
 
   nav: {
@@ -195,7 +169,7 @@ export const fr = {
         summary: 'Plateforme IoT de détection de chute.',
         figure: '2',
         figureCaption: 'EHPAD équipés · En production',
-        preview: 'aperçu ZoeCare',
+        preview: 'TODO: aperçu ZoeCare',
       },
       {
         num: '02',
@@ -206,19 +180,19 @@ export const fr = {
         summary: 'Tag de tracking EmotionsAI. Blocking time ramené de 120 ms à 53 ms.',
         figure: '−56%',
         figureCaption: 'Blocking time · 120 ms → 53 ms',
-        preview: 'aperçu AB Tasty',
+        preview: 'TODO: aperçu AB Tasty',
       },
       {
         num: '03',
         title: homelab.title,
-        href: `/work/${homelab.slug}`,
+        href: null,
         context: homelab.context,
         tags: homelab.tags,
         summary:
           'iMac 2009 en Debian : média, réseau, VPN. L’infra que je fais aujourd’hui en production, je l’ai apprise dessus.',
         figure: '17 ans',
         figureCaption: 'En service depuis 2009',
-        preview: 'aperçu Homelab',
+        preview: 'TODO: aperçu Homelab',
       },
     ],
   },
@@ -230,12 +204,13 @@ export const fr = {
     index: '(02)',
     label: 'System',
     intro:
-      'Ce qui suit sort des trois pages ci-dessus. Rien n’y figure qui n’ait tourné dans un des trois projets.',
+      'Ce qui suit sort des trois projets ci-dessus. Rien n’y figure qui n’ait tourné dans l’un d’eux.',
     groups: [
       { label: 'Langages', items: ['TypeScript', 'JavaScript', 'Python', 'SQL', 'Dart'] },
-      { label: 'Front', items: ['React', 'Next.js', 'Flutter'] },
-      { label: 'Backend', items: ['Node.js', 'Supabase', 'PostgreSQL', 'Cassandra', 'Metabase'] },
-      { label: 'Infra', items: ['Docker', 'Linux', 'Nginx', 'systemd', 'OVH', 'SSL/TLS', 'WireGuard'] },
+      { label: 'Front', items: ['React', 'Flutter'] },
+      { label: 'Backend', items: ['Node.js', 'Supabase'] },
+      { label: 'Données', items: ['PostgreSQL', 'Cassandra', 'BigQuery', 'Metabase'] },
+      { label: 'Infra', items: ['Docker', 'Debian', 'Nginx', 'systemd', 'OVH', 'SSL/TLS', 'WireGuard'] },
       { label: 'Embarqué', items: ['Raspberry Pi', 'ESP32', 'MQTT', 'OTA signé SHA-256'] },
     ],
   },
@@ -248,6 +223,7 @@ export const fr = {
     emailLocal: 'alexandru.panta2003',
     emailDomain: '@gmail.com',
     status: 'Disponible — CDI',
+    statusStrong: true,
     links: [
       { label: 'linkedin.com/in/alexandru-panta', href: 'https://linkedin.com/in/alexandru-panta' },
       { label: 'github.com/AlexandruPanta', href: 'https://github.com/AlexandruPanta' },
@@ -256,7 +232,7 @@ export const fr = {
 
   footer: {
     line: 'Alex Panta · Paris · 2026',
-    legalName: 'Alexandru Panta',
+    legalName: '© Alexandru Panta',
   },
 
   caseStudy: {
@@ -266,7 +242,9 @@ export const fr = {
     todoMark: 'TODO: à écrire',
   },
 
-  caseStudies: { zoecare, abTasty, homelab },
+  /* Homelab n'a pas de case study : quatre sections sur cinq seraient
+     des TODO. La ligne reste sur la home, sans lien. */
+  caseStudies: { zoecare, abTasty },
 
   /* Séparateur des listes mono, et flèche de progression. Une seule
      forme pour les deux usages : contexte de projet et bloc chiffres. */

@@ -314,12 +314,17 @@ un — sinon la colonne de droite est vide.
 Chasse tabulaire obligatoire (`font-variant-numeric: tabular-nums`) : un compteur animé
 ne doit produire **aucun** décalage de mise en page.
 
-**Schéma** — SVG inline, 1px en `--line`, angles droits, labels mono. `--accent` ne porte
-que le **chemin critique**, et le trait s'arrête pile au bord des nœuds extrêmes : un
-trait qui dépasse laisse deux moignons sans signification. Les nœuds masquent le trait
-sous eux plutôt que de se superposer. Sous 768px, le même dessin pivote à la verticale —
-cinq labels mono ne tiennent pas sur 335px. Le `<figcaption>` énonce la chaîne en toutes
-lettres : le filet à 1.33:1 ne porte jamais l'information seul.
+**Chaîne d'architecture** — une `<ol>` en HTML, **pas un SVG**. Filet 1px `--line`,
+angles droits, labels mono `--t-meta`, connecteurs en `::after` (1px `--text`, aucun
+glyphe de flèche). `flex-direction: column` sous 768px. Pas de légende : une liste
+ordonnée se lit seule.
+
+> Le texte d'un SVG à `viewBox` se met à l'échelle avec son conteneur. Les labels
+> tombaient à ~6px à 1028 et ~9px à 1440, sous `--t-meta` — donc hors de l'échelle à
+> cinq tailles. Un schéma dont le texte compte se fait en HTML.
+
+Le schéma dit **le quoi**, la prose qui le suit dit **le pourquoi**. Pas de prose fléchée
+qui répète le schéma.
 
 > Si le schéma ne tient pas en 1px, on simplifie le schéma. On n'ajoute pas de style.
 
@@ -367,6 +372,16 @@ tracent de gauche à droite à l'entrée de leur section.
 Si tous les filets tracent, l'effet devient une texture et cesse d'être une signature.
 
 `prefers-reduced-motion: reduce` → `scaleX(1)` immédiat, **aucun trigger créé**.
+
+### Le loader n'appartient qu'à l'entrée du site
+
+Il joue au **premier chargement réel uniquement** : un drapeau de portée module, qui
+survit aux navigations client et meurt avec un rechargement. Toute arrivée sur le site,
+quelle que soit la page, le lève — ouvrir un case study en direct puis revenir sur la
+home ne le rejoue pas. Les case studies ne l'affichent jamais.
+
+L'amorçage vit dans `lib/useSiteMotion.js`, partagé par la home et les case studies :
+un seul mécanisme, pas un par page.
 
 ### Aucun état masqué avant que le motion soit là
 
@@ -437,6 +452,18 @@ Ne produire **jamais** :
 - Échelle typographique vérifiée au rendu aux quatre largeurs.
 - Audit passé : aucune valeur de design codée en dur hors `tokens.css`.
 
+**Lighthouse** — mesuré en build de production, preset desktop, sur la home **et** sur
+`/work/zoecare` :
+
+| | Perf | A11y | Best practices | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|
+| `/` | **100** | **100** | **100** | **100** | 0.6 s | 0 | 0 ms |
+| `/work/zoecare` | **100** | **100** | **100** | **100** | 0.6 s | 0 | 0 ms |
+
+> `SplitText` pose par défaut un `aria-label` sur l'élément découpé. Sur un `<p>` sans
+> rôle c'est de l'ARIA interdit, et ça coûtait 5 points d'accessibilité. On découpe en
+> lignes, jamais en caractères : le texte reste lisible tel quel, donc `aria: 'none'`.
+
 **Mesuré aux étapes 1 à 3** — sur la home, à 375, 414, 500, 768, 1440 et 1920 :
 
 - zéro débordement horizontal
@@ -496,7 +523,32 @@ Les trois pages sortent d'un seul gabarit : `pages/work/[slug].js`, alimenté pa
 
 ---
 
-## 13 · En attente de contenu
+## 13 · Partage et garde-fou
+
+Le site est collé dans LinkedIn et dans des mails : l'aperçu est la première chose qu'un
+recruteur voit. `components/Meta.js` émet `title`, `description`, `og:*`, `twitter:*` et
+l'URL canonique, pour la home comme pour chaque case study.
+
+**Aperçus** — 1200×630 dans `public/og/`, générés par `scripts/make-og.py` : même
+traitement que le hero, fond `--bg`, filets 1px, label mono, nom en Satoshi. Le texte est
+converti en **tracés**, donc l'image ne dépend d'aucune police installée sur la machine
+qui la rasterise. Les PNG sont versionnés ; on ne régénère que si un titre change.
+
+**Domaine** — tant que `site.origin` vaut `TODO: DOMAINE`, ni `canonical` ni `og:url` ne
+sont émis : LinkedIn refuse une `og:image` relative, mais une URL canonique fausse est
+pire que pas de canonique du tout.
+
+**Garde-fou** — `scripts/check-todo.mjs` tourne en `prebuild` et fait **échouer
+`npm run build`** s'il reste un trou de contenu dans `content/copy.js` : un champ `todo:`
+ou un littéral `TODO:`. Contournement explicite pour les builds locaux :
+
+```
+ALLOW_TODO=1 npm run build
+```
+
+---
+
+## 14 · En attente de contenu
 
 Rien n'est inventé. Ces marques restent visibles dans `/styleguide` jusqu'à ce que
 l'information arrive.
@@ -512,7 +564,7 @@ l'information arrive.
 
 ---
 
-## 14 · Carte des fichiers
+## 15 · Carte des fichiers
 
 ```
 DESIGN.md                      ce document — référence normative
@@ -525,9 +577,13 @@ lib/motion.js                  runtime motion : Lenis, ScrollTrigger, le tracé,
 pages/_document.js             pose la classe `js` avant la peinture, précharge
                                Satoshi et JetBrains Mono
 pages/index.js                 la home — loader, nav, hero, (01) Selected work
-pages/work/[slug].js           gabarit unique des trois case studies, schéma
-                               SVG inline. getStaticPaths + getStaticProps,
-                               les trois pages sont prérendues.
+pages/work/[slug].js           gabarit unique des case studies. getStaticPaths
+                               + getStaticProps, pages prérendues.
+components/Meta.js             balises de partage, communes à toutes les pages
+lib/fonts.js                   next/font/local — repli aux métriques ajustées
+lib/useSiteMotion.js           amorçage motion partagé, loader compris
+scripts/check-todo.mjs         garde-fou prebuild contre un trou publié
+scripts/make-og.py             génère public/og/*.png (texte en tracés)
 styles/CaseStudy.module.css    habillage du template de case study
 styles/Home.module.css         habillage de la home
 pages/styleguide.js            /styleguide — vérification visuelle du système
@@ -552,7 +608,7 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 
 ---
 
-## 15 · Dette
+## 16 · Dette
 
 **Soldé à l'étape 1**
 
@@ -576,7 +632,7 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 - La navigation liste les trois sections ; les trois ancres existent.
 - Les trois lignes projet sont de vrais `<a>`, vers les trois case studies.
 
-## 16 · Checklist avant chaque bloc
+## 17 · Checklist avant chaque bloc
 
 1. Relire §9. Aucun interdit présent ?
 2. Aucune valeur de design hors token ? `grep -nE "#[0-9A-Fa-f]{3,8}|[0-9]+(px|rem)"` sur le CSS.
