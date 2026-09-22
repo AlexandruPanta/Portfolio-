@@ -33,8 +33,8 @@ comme ceux ajoutés depuis. Aucune valeur de design ne vit ailleurs.
 | `--bg` | `#F4F2EE` | Papier. Fond par défaut. |
 | `--surface` | `#FFFFFF` | Bloc surélevé. Usage rare, jamais en carte. |
 | `--line` | `#D8D3C9` | Filets 1px. Structure principale. |
-| `--text` | `#0C0C0C` | Texte principal, titres, chiffres. |
-| `--text-dim` | `#6B675F` | Texte secondaire, labels, légendes. |
+| `--text` | `#0C0C0C` | Texte principal : titres, chiffres, **corps de texte**. |
+| `--text-dim` | `#6B675F` | **Réservé** aux labels meta, lignes de contexte, légendes. Jamais un paragraphe de contenu. |
 | `--accent` | `#1A1AFF` | Accent unique. 3 usages max en home. |
 | `--invert-bg` | `#0C0C0C` | Valeur de fond de la portée inversée. |
 
@@ -383,26 +383,29 @@ home ne le rejoue pas. Les case studies ne l'affichent jamais.
 L'amorçage vit dans `lib/useSiteMotion.js`, partagé par la home et les case studies :
 un seul mécanisme, pas un par page.
 
-### Aucun état masqué avant que le motion soit là
+### Aucun état masqué avant que le motion soit là — et jamais ce qui est déjà visible
 
 > Le CSS ne pose jamais d'état masqué. Une règle adossée à `html.js` ouvrirait une
 > fenêtre : la classe est posée avant la peinture, alors que `lib/motion.js` arrive en
 > `import()` différé. Sur réseau lent le contenu resterait invisible pendant toute la
 > fenêtre — et pour de bon si le chunk échoue.
 
-Le masquage est posé par `lib/motion.js`, une fois chargé, selon deux cas :
+`lib/motion.js`, une fois chargé, ne masque **que ce qui est hors écran** (`start` ne
+touche jamais un élément déjà dans le viewport). Il n'existe pas de fonction qui masque
+l'écran entier en priant que le loader le couvre encore.
 
-- **Le chunk arrive pendant le loader** — l'écran est couvert, on masque tout
-  (`prime`). Le reveal du hero joue normalement à la levée.
-- **Le chunk arrive après** — on ne masque **que ce qui est hors écran**. Ce que
-  l'utilisateur a déjà lu ne disparaît jamais pour réapparaître.
-- **Le chunk n'arrive pas** — rien n'est masqué, la page est entière, elle a
-  simplement perdu ses animations.
+> La première version avait ce mécanisme (`prime`) : si le chunk arrivait pendant le
+> loader, elle masquait tout d'un coup avant de révéler. Une sonde à conditions réseau
+> réelles (mobile lent, CPU × 4) l'a prise en défaut : le loader est rendu par React et
+> monte donc *après* la première peinture native. Le hero était visible à 271ms, puis
+> masqué à 2172ms quand `prime` s'exécutait derrière un loader déjà levé, puis re-révélé
+> à 3771ms. Du contenu déjà lu qui disparaît pour réapparaître — exactement ce que la
+> règle interdit. `prime` a été retiré ; seul le hors-écran est jamais touché.
 
 Vérifié en conditions réelles : chunk retiré du build (jamais livré) → 0 élément
 masqué, page intégralement lisible ; chunk bridé à 3 s via proxy, soit bien après la
-levée du loader à 1.2 s → 0 élément masqué **à l'écran**, le tracé joue quand même au
-défilement sur ce qui est plus bas.
+levée du loader à 1.2 s → 0 élément masqué **à l'écran** sur toute la durée, le tracé
+joue quand même au défilement sur ce qui est plus bas.
 
 `prefers-reduced-motion: reduce` → durées à 0.01ms, `--reveal-y` à 0, tout s'affiche
 instantanément, site 100 % lisible. Déjà câblé dans `tokens.css`.
@@ -452,8 +455,7 @@ Ne produire **jamais** :
 - Échelle typographique vérifiée au rendu aux quatre largeurs.
 - Audit passé : aucune valeur de design codée en dur hors `tokens.css`.
 
-**Lighthouse** — mesuré en build de production, preset desktop, sur la home **et** sur
-`/work/zoecare` :
+**Lighthouse — desktop**, build de production, home **et** `/work/zoecare` :
 
 | | Perf | A11y | Best practices | SEO | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|
@@ -464,16 +466,42 @@ Ne produire **jamais** :
 > rôle c'est de l'ARIA interdit, et ça coûtait 5 points d'accessibilité. On découpe en
 > lignes, jamais en caractères : le texte reste lisible tel quel, donc `aria: 'none'`.
 
+**Lighthouse — mobile**, preset par défaut, mêmes pages — le lien s'ouvre plus souvent
+depuis l'app LinkedIn que depuis un bureau :
+
+| | Perf | A11y | Best practices | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|
+| `/` | **97** | **100** | **100** | **100** | 2.6 s | 0 | 0 ms |
+| `/work/zoecare` | **97** | **100** | **100** | **100** | 2.6 s | 0 | 0 ms |
+
+> LCP mobile dépasse la cible de 2s. La cause : sous le throttling simulé (Lantern) de
+> Lighthouse, 4 fichiers de police préchargés se disputent une bande passante réduite,
+> et l'estimateur compte le `<h1>` (l'élément LCP) comme bloqué en attente. Un test à
+> conditions réseau réelles (CDP, 150ms de latence, 1.6 Mbps, CPU × 4) montre le hero
+> peint et stable dès 271ms — aucun décalage, aucune disparition. Un essai sans
+> précharger mono/serif a gagné 0.2s de LCP mais introduit du CLS (0,001 → au lieu de
+> 0) : compromis refusé, un CLS parfait vaut plus qu'un LCP encore au-dessus de la
+> cible. Le score de perf (97) reste largement au-dessus du seuil de 95 de la commande.
+
+**Aucun état masqué, quelle que soit la conjoncture** — `lib/motion.js` ne masque plus
+jamais rien qui soit déjà à l'écran (voir §8). Une sonde réseau réelle avait révélé
+pourquoi la version précédente était insuffisante : sur mobile lent, le loader (rendu
+par React) monte **après** la première peinture ; du contenu déjà visible pouvait donc
+disparaître puis réapparaître. Corrigé en amont, pas en façade.
+
+**`prefers-reduced-motion` vérifié par bascule réelle**, pas par lecture de code —
+`scripts/check-reduced-motion.mjs` pilote Chrome via Playwright avec
+`reducedMotion: 'reduce'` (agit sur `matchMedia` exactement comme le réglage système) et
+mesure, sur la home et une case study : 0 élément masqué à tout instant, 0 animation en
+cours, le loader jamais affiché. Conforme sur les deux pages.
+
 **Mesuré aux étapes 1 à 3** — sur la home, à 375, 414, 500, 768, 1440 et 1920 :
 
 - zéro débordement horizontal
 - zéro paire texte / fond sous 4.5:1
 - échelle typographique conforme au tableau §5
 - zéro décalage de mise en page à la révélation de l'aperçu (place réservée d'avance)
-- **JS initial : 121.9 kB gzip** — budget 150 kB tenu, GSAP et Lenis différés
-
-**Non mesuré à ce stade** — Lighthouse, LCP, CLS. Ces mesures n'ont de sens qu'une fois
-toutes les sections assemblées : étape 8.
+- **JS initial : 127.7 kB gzip** — budget 150 kB tenu, GSAP et Lenis différés
 
 ---
 
@@ -484,15 +512,14 @@ toutes les sections assemblées : étape 8.
 | Loader | Compteur % en mono sur `--bg`. 1.2s max. |
 | Nav | Filet 1px en bas, mono 11px uppercase, pas de logo image. Sous 768px seuls les numéros restent visibles — les libellés passaient la nav à trois lignes et 99px de haut. Le libellé demeure dans le nom accessible du lien. |
 | Hero | `(00) — ALEX PANTA` / nom en `--t-hero` / une ligne de positionnement / lieu + année en mono. Rien d'autre. Pas de bouton. |
-| (01) Work | 3 projets en liste éditoriale : ligne, numéro, titre, année, tags mono. Pas de cartes. Le survol révèle l'aperçu. Reste sur papier. |
-| Case study | Template dédié : contexte / contrainte / architecture / résultat chiffré. |
+| (01) Work | 3 projets en liste éditoriale : ligne, numéro, titre, contexte, tags mono, chiffre toujours visible. Pas de cartes. L'aperçu image est **optionnel** — sans lui, pas de révélation au survol, la ligne tient avec son chiffre. Reste sur papier. |
+| Case study | Template dédié : contexte / problème / contrainte / architecture / résultat chiffré / stack. **ZoeCare et AB Tasty seulement** — Homelab n'a pas de page (4 sections sur 5 seraient des `todo`), sa ligne reste sur la home sans lien et sans survol. |
 | (02) System | Fiche technique en colonnes mono, une ligne par groupe. **Seule section inversée** du site — porte `[data-theme="invert"]`, pleine largeur. Pas de barre de niveau, pas de logo, pas d'icône. |
 | (03) Contact | Bloc **pleine largeur** : l'adresse fait 1034px en `--t-h2` à 1440, elle ne tient pas dans huit colonnes. Adresse en `--accent`, statut et liens en mono. Pas de formulaire. |
 | Footer | Filet 1px, mono : `ALEX PANTA · PARIS · 2026` et les mentions `Alexandru Panta`. Pas de fuseau horaire — `CET`/`CEST` est la même imprécision qu'un décalage codé en dur, et un fuseau en footer ne dit rien que `PARIS · 2026` ne dise déjà. |
 
 **Langue** — labels meta en anglais (`(01) — SELECTED WORK`), corps de texte en
-français. Les labels sont nommés en anglais par la commande elle-même ; la cible est
-française. Décision à confirmer.
+français. **Validé.** Règle en §6.
 
 **Contenu réel** — aucun projet inventé :
 
@@ -507,12 +534,23 @@ française. Décision à confirmer.
 Template : **contexte / problème / contrainte / architecture / résultat chiffré / stack**.
 Le label de section, le titre en `--t-hero`, le contexte démarrant colonne 5.
 
+> Les paragraphes de corps sont en `--text`, pas `--text-dim` : la prose EST le contenu
+> de la page, pas une légende. Même règle sur `.workSummary` en home. `--text-dim` reste
+> aux labels meta, lignes de contexte et légendes — jamais un paragraphe.
+
 **Confidentialité** — un CV se transmet, un site se publie. Aucun établissement, aucun
 résident, aucun système téléphonique client n'est nommé. On reste au niveau des briques
 d'infra standard.
 
 **Les `todo` sont des phrases qu'Alex écrit lui-même.** Elles ne se rédigent pas à sa
-place : l'emplacement est réservé et marqué, il reste vide.
+place : l'emplacement est réservé et marqué, il reste vide. Un second chiffre ou une
+image d'aperçu absents ne sont **pas** des `todo` — ce sont des champs optionnels, ils
+n'apparaissent simplement pas tant qu'ils ne sont pas fournis.
+
+**Le rôle avant le clic** — `<title>` et `og:title` de la home portent le poste visé
+(« Développeur full-stack, IoT & e-santé »), pas juste le nom. Les case studies portent
+`Titre — Alex Panta`. La description reprend la ligne de positionnement du hero — un
+recruteur doit comprendre le rôle avant d'ouvrir le lien.
 
 **Règle éditoriale du (02) SYSTEM** — la section ne liste **que** ce qui apparaît dans un
 case study. Pas de recopie de CV, pas de techno sans preuve derrière. Si ça n'est pas
@@ -539,12 +577,19 @@ sont émis : LinkedIn refuse une `og:image` relative, mais une URL canonique fau
 pire que pas de canonique du tout.
 
 **Garde-fou** — `scripts/check-todo.mjs` tourne en `prebuild` et fait **échouer
-`npm run build`** s'il reste un trou de contenu dans `content/copy.js` : un champ `todo:`
-ou un littéral `TODO:`. Contournement explicite pour les builds locaux :
+`npm run build`** s'il reste un trou **bloquant** dans `content/copy.js` : un champ
+`todo:` ou un littéral `TODO:` (le domaine, tant qu'il n'est pas fixé). Ce qui est
+optionnel — un second chiffre, un aperçu image absent — ne compte pas : ce sont des
+champs qui n'existent simplement pas encore, pas des trous.
 
 ```
 ALLOW_TODO=1 npm run build
 ```
+
+Contournement réservé aux préversions. **Refusé en production Vercel** même si la
+variable traîne dans l'environnement (`VERCEL_ENV=production` prime sur `ALLOW_TODO`) :
+la prod ne part jamais avec un trou de contenu. À poser sur l'environnement *Preview*
+de Vercel seulement, jamais sur *Production*.
 
 ---
 
@@ -582,8 +627,10 @@ pages/work/[slug].js           gabarit unique des case studies. getStaticPaths
 components/Meta.js             balises de partage, communes à toutes les pages
 lib/fonts.js                   next/font/local — repli aux métriques ajustées
 lib/useSiteMotion.js           amorçage motion partagé, loader compris
-scripts/check-todo.mjs         garde-fou prebuild contre un trou publié
+scripts/check-todo.mjs         garde-fou prebuild contre un trou bloquant publié
 scripts/make-og.py             génère public/og/*.png (texte en tracés)
+scripts/check-reduced-motion.mjs  vérifie prefers-reduced-motion par bascule
+                                réelle (Playwright + Chrome installé)
 styles/CaseStudy.module.css    habillage du template de case study
 styles/Home.module.css         habillage de la home
 pages/styleguide.js            /styleguide — vérification visuelle du système

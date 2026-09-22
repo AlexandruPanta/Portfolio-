@@ -53,7 +53,6 @@ const zoecare = {
       figure: '2',
       figureCaption: 'EHPAD équipés · En production',
       body: ['Déployé et en production dans 2 EHPAD.'],
-      todo: 'un second chiffre si tu en as un de publiable (réduction de faux positifs, temps de réponse).',
     },
   ],
   stack: [
@@ -126,9 +125,10 @@ export const fr = {
   },
 
   head: {
-    title: 'Alex Panta — Systèmes connectés, du capteur à la production',
-    description:
-      'Alex Panta, développeur full-stack orienté systèmes : IoT et embarqué, backend, sécurité. Plateforme IoT de détection de chute, optimisation de performance, infrastructure auto-hébergée.',
+    /* Le rôle doit être lisible avant le clic : le titre le porte, la
+       description reprend la ligne de positionnement du hero. */
+    title: 'Alex Panta — Développeur full-stack, IoT & e-santé',
+    description: 'Du capteur embarqué à l’infrastructure qui le tient en production.',
     path: '/',
     ogImage: '/og/home.png',
   },
@@ -169,7 +169,9 @@ export const fr = {
         summary: 'Plateforme IoT de détection de chute.',
         figure: '2',
         figureCaption: 'EHPAD équipés · En production',
-        preview: 'TODO: aperçu ZoeCare',
+        /* Pas d'image : pas de révélation au survol. La ligne tient
+           avec son chiffre. */
+        preview: null,
       },
       {
         num: '02',
@@ -180,7 +182,9 @@ export const fr = {
         summary: 'Tag de tracking EmotionsAI. Blocking time ramené de 120 ms à 53 ms.',
         figure: '−56%',
         figureCaption: 'Blocking time · 120 ms → 53 ms',
-        preview: 'TODO: aperçu AB Tasty',
+        /* Pas d'image : pas de révélation au survol. La ligne tient
+           avec son chiffre. */
+        preview: null,
       },
       {
         num: '03',
@@ -192,7 +196,7 @@ export const fr = {
           'iMac 2009 en Debian : média, réseau, VPN. L’infra que je fais aujourd’hui en production, je l’ai apprise dessus.',
         figure: '17 ans',
         figureCaption: 'En service depuis 2009',
-        preview: 'TODO: aperçu Homelab',
+        preview: null,
       },
     ],
   },

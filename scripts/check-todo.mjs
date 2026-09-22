@@ -3,14 +3,18 @@
    Un trou de contenu dans content/copy.js ne doit pas pouvoir partir en
    production par accident : ce script fait échouer `npm run build`.
 
-   Deux formes de trou sont détectées :
-     - un champ `todo:`          — une section dont le texte reste à écrire
-     - un littéral `TODO:`       — un aperçu manquant, un domaine non fixé
+   Ne comptent que les trous qui bloquent vraiment :
+     - un champ `todo:`   — une section dont le texte reste à écrire
+     - un littéral `TODO:` — le domaine, tant qu'il n'est pas fixé
 
-   `todoMark` est exclu : c'est le libellé affiché du gabarit, pas un trou.
+   Ce qui est optionnel ne bloque pas : un aperçu image absent vaut
+   `preview: null`, la ligne tient avec son chiffre.
 
-   Contournement explicite pour les builds locaux :
+   Contournement, pour les préversions seulement :
      ALLOW_TODO=1 npm run build
+
+   Il est refusé en production Vercel : la prod ne part pas avec un trou,
+   même si la variable traîne dans l'environnement.
 */
 
 import { readFileSync } from 'node:fs';
@@ -25,25 +29,36 @@ const holes = readFileSync(file, 'utf8')
   .split('\n')
   .map((text, i) => ({ line: i + 1, text: text.trim() }))
   .filter(({ text }) => {
-    if (text.startsWith('//') || text.startsWith('*')) return false;
+    if (text.startsWith('//') || text.startsWith('*') || text.startsWith('/*')) return false;
     if (/\btodoMark\s*:/.test(text)) return false;
     return /^todo\s*:/.test(text) || text.includes('TODO:');
   });
 
 if (holes.length === 0) {
-  console.log(`check-todo · ${label} — aucun trou de contenu.`);
+  console.log(`check-todo · ${label} — aucun trou bloquant.`);
   process.exit(0);
 }
 
-const head = `check-todo · ${holes.length} trou${holes.length > 1 ? "s" : ""} de contenu dans ${label}`;
+const head = `check-todo · ${holes.length} trou${holes.length > 1 ? 's' : ''} bloquant${
+  holes.length > 1 ? 's' : ''
+} dans ${label}`;
 
-if (process.env.ALLOW_TODO === '1') {
-  console.log(`${head} — ALLOW_TODO=1, build local autorisé.`);
+const isVercelProd = process.env.VERCEL_ENV === 'production';
+const bypass = process.env.ALLOW_TODO === '1';
+
+if (bypass && isVercelProd) {
+  console.error(`\n${head}.`);
+  console.error(
+    'ALLOW_TODO est ignoré en production Vercel — la prod ne part pas avec un trou.\n'
+  );
+} else if (bypass) {
+  console.log(`${head} — ALLOW_TODO=1, build de préversion autorisé.`);
   for (const { line, text } of holes) console.log(`  ${label}:${line}  ${text.slice(0, 92)}`);
   process.exit(0);
+} else {
+  console.error(`\n${head}. Build interrompu.\n`);
 }
 
-console.error(`\n${head}. Build interrompu.\n`);
 for (const { line, text } of holes) console.error(`  ${label}:${line}\n    ${text.slice(0, 116)}\n`);
-console.error('Écris ces passages, ou relance avec ALLOW_TODO=1 pour un build local.\n');
+console.error('Écris ces passages, ou ALLOW_TODO=1 pour une préversion.\n');
 process.exit(1);

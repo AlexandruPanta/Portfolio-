@@ -167,11 +167,20 @@ export default function Home() {
                         {project.figureCaption}
                       </p>
 
-                      <div className={s.preview}>
-                        <div className={s.previewSlot}>
-                          <p className={s.todo}>{project.preview}</p>
+                      {/* Pas d'image, pas de révélation : la ligne tient avec
+                          son chiffre. L'aperçu revient avec les photos. */}
+                      {project.preview ? (
+                        <div className={s.preview}>
+                          <img
+                            className={s.previewImage}
+                            src={project.preview}
+                            alt={`Aperçu — ${project.title}`}
+                            width="640"
+                            height="400"
+                            loading="lazy"
+                          />
                         </div>
-                      </div>
+                      ) : null}
                     </div>
                   </div>
                 </article>

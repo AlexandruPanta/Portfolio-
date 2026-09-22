@@ -136,12 +136,14 @@
   letter-spacing: var(--track-display);
 }
 
+/* --text : c'est le contenu principal de la page. --text-dim reste aux
+   labels, lignes de contexte et légendes (DESIGN.md §2). */
 .paragraph {
   margin: 0 0 var(--s3);
   max-width: 68ch;
   font-size: var(--t-body);
   line-height: var(--leading-body);
-  color: var(--text-dim);
+  color: var(--text);
 }
 
 .paragraph:last-child { margin-bottom: 0; }
