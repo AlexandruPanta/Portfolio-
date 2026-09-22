@@ -406,6 +406,14 @@ l'écran entier en priant que le loader le couvre encore.
 > masqué à 2172ms quand `prime` s'exécutait derrière un loader déjà levé, puis re-révélé
 > à 3771ms. Du contenu déjà lu qui disparaît pour réapparaître — exactement ce que la
 > règle interdit. `prime` a été retiré ; seul le hors-écran est jamais touché.
+>
+> **Une exception, ajoutée en V1.1** : `primeHero`/`revealHero`, réservées au nom du
+> hero (§ ci-dessous). Contrairement à l'ancien `prime`, elle vérifie l'état *courant*
+> de `ready` (via une ref, pas une fermeture) avant de masquer : elle ne masque que si
+> le loader couvre encore l'écran à cet instant précis, jamais après coup. C'est la
+> même garantie que le reste de cette section, appliquée par une voie différente parce
+> que le hero échoue systématiquement au filtre `offscreen` — il est visible dès le
+> premier paint, sous le loader.
 
 Vérifié en conditions réelles : chunk retiré du build (jamais livré) → 0 élément
 masqué, page intégralement lisible ; chunk bridé à 3 s via proxy, soit bien après la
@@ -414,6 +422,71 @@ joue quand même au défilement sur ce qui est plus bas.
 
 `prefers-reduced-motion: reduce` → durées à 0.01ms, `--reveal-y` à 0, tout s'affiche
 instantanément, site 100 % lisible. Déjà câblé dans `tokens.css`.
+
+### V1.1 — révision assumée : tout dérive du tracé
+
+> Le § de la commande d'origine qui posait « un seul effet signature sur tout le
+> site » est ici révisé à dessein : quatre mécanismes de mouvement s'ajoutent.
+> Chacun reprend `scaleX`/`scaleY: 0→1`, `--ease`, `--d-base`, `--stagger` — les
+> mêmes primitives, jamais une nouvelle courbe ni une nouvelle durée. Rien de
+> nouveau qui ne descende du tracé.
+
+**A · La chaîne ZoeCare — le moment fort du site.** Chaque boîte du schéma
+d'architecture (§7) n'a plus une seule bordure CSS : elle est composée de 4 filets 1px
+indépendants (`[data-chain-edge]`), un par côté, chacun avec son propre
+`transform-origin` pour dessiner un tracé continu dans le sens horaire. À l'entrée
+dans le viewport, une boîte (ses 4 filets ensemble) puis son connecteur puis la boîte
+suivante se tracent, CAPTEUR → SOIGNANT, `--stagger` entre chaque étape. Une fois la
+chaîne entière tracée, un carré plein (6px, `--text` — jamais `--accent`, un seul bleu
+sur le site) la parcourt une fois en 1.6s puis s'efface. Sous 768px, la chaîne est déjà
+en colonne (§7) : même séquence, du haut vers le bas — l'axe de l'impulsion (`x` ou
+`y`) est lu sur la disposition réelle (`flex-direction` du conteneur), jamais déduit
+d'un point de rupture supposé.
+
+Isolée dans `initChain()`, séparée de `trace()`/`reveals()` : c'est une chorégraphie
+propre à un seul schéma, pas un primitif générique — les fondre ensemble aurait mis en
+risque le mécanisme déjà en production sur tout le reste du site. Même garde que
+`trace()`/`reveals()` : ne touche jamais un élément déjà visible à l'écran.
+
+**B · Transition de page.** Au clic sur un lien vers un projet ou vers « retour aux
+projets », un filet 1px (`position: fixed`, pleine hauteur, 1px de large) balaie
+l'écran — `x: 0 → largeur de la fenêtre`, `--ease`, `--d-base` — puis la navigation a
+lieu (`router.push`) et la page arrivée joue son reveal existant, sans rien de
+nouveau. Retour : même filet, `x` part du bord droit vers `0`. Vit dans
+`lib/motion.js` (`sweepTo()`) plutôt qu'un fichier séparé, pour partager l'instance
+GSAP déjà chargée par `useSiteMotion` — un second `import()` aurait dupliqué GSAP dans
+un chunk distinct. N'existe que sur clic (`onClick` des `<Link>` concernés, avec
+`preventDefault`) : jamais au premier chargement, et le loader ne rejoue toujours
+jamais en navigation client — ce mécanisme n'y touche pas.
+
+**C · Hero — la graisse variable.** Satoshi est une police variable ; au premier
+chargement seulement, « Alex Panta » monte de la graisse 300 à sa graisse finale (500)
+pendant le reveal. `--wght` est un CSS custom property numérique que GSAP anime
+directement ; sa valeur de repos (500, posée en CSS) fait qu'un chargement sans JS
+affiche déjà la graisse finale. Jamais au scroll : recalculer la largeur des glyphes à
+chaque image sur un texte de 208px coûterait un reflow par frame.
+
+> Le hero est visible dès le premier paint, sous le loader — il échoue donc
+> systématiquement au filtre `offscreen` de `reveals()` (voir plus haut). Un premier
+> essai, câblé directement dans `reveals()` via un attribut `data-reveal-weight`,
+> échouait silencieusement pour cette raison : vérifié par échantillonnage, `--wght`
+> restait bloqué à 500 sur toute la durée du chargement, l'animation ne jouait jamais.
+> Corrigé par `primeHero()`/`revealHero()`, dédiées, qui contournent ce filtre pour ce
+> seul élément — voir l'encadré plus haut sur la garantie qui les rend sûres.
+
+**D · Compteurs (§6, câblés maintenant).** `2`, `−56%`, `17 ans`, `30` comptent de 0 à
+leur valeur au premier passage à l'écran — `[data-counter]`, une fonction dédiée
+(`counters()`) qui lit le texte SSR (déjà la valeur finale), en extrait signe, nombre
+et suffixe par une expression régulière, et anime un objet JS simple dont
+`onUpdate` réécrit le texte. Chasse tabulaire déjà posée en CSS sur `.figure`/
+`.rowFigure` : aucune largeur ne saute pendant le compte, seule la valeur affichée
+change. Sans JS, le texte SSR reste la valeur finale — rien à compter, rien à faire.
+
+**Vérifié** — `prefers-reduced-motion` (bascule réelle via `reducedMotion: 'reduce'`
+en contexte Playwright, pas une lecture de code) sur les quatre mécanismes : zéro
+élément masqué, zéro animation en cours, le filet de balayage n'est jamais créé, le
+hero reste en permanence à `--wght: 500`. `scripts/check-reduced-motion.mjs` les
+couvre tous les quatre, sur la home et une case study.
 
 ---
 

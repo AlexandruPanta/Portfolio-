@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Meta from '../../components/Meta';
 import s from '../../styles/CaseStudy.module.css';
 import copy from '../../content/copy';
@@ -8,17 +9,30 @@ import { useSiteMotion } from '../../lib/useSiteMotion';
 const studies = Object.values(copy.caseStudies);
 
 /* Chaîne d'architecture — une liste ordonnée, pas un dessin.
-   L'ordre est porté par le <ol> ; les connecteurs sont des filets 1px
-   en ::after, sans glyphe de flèche. */
+   L'ordre est porté par le <ol>. Les 4 bords de chaque boîte et les
+   connecteurs sont des éléments réels (pas des ::after) : lib/motion.js
+   doit pouvoir les cibler pour le tracé de la V1.1 — voir DESIGN.md §4.
+   Sans JS, ou en mouvement réduit, ils sont posés à l'état final par le
+   CSS : la chaîne se lit intégralement immobile. */
 function Chain({ steps }) {
   return (
-    <ol className={s.chain}>
-      {steps.map((step) => (
-        <li key={step} className={s.chainStep}>
-          {step}
-        </li>
-      ))}
-    </ol>
+    <div className={s.chainWrap} data-chain>
+      <ol className={s.chain} data-chain-track>
+        {steps.map((step, i) => (
+          <li key={step} className={s.chainStep} data-chain-step>
+            <span className={`${s.chainEdge} ${s.chainEdgeTop}`} data-chain-edge="top" aria-hidden="true" />
+            <span className={`${s.chainEdge} ${s.chainEdgeRight}`} data-chain-edge="right" aria-hidden="true" />
+            <span className={`${s.chainEdge} ${s.chainEdgeBottom}`} data-chain-edge="bottom" aria-hidden="true" />
+            <span className={`${s.chainEdge} ${s.chainEdgeLeft}`} data-chain-edge="left" aria-hidden="true" />
+            <span className={s.chainLabel}>{step}</span>
+            {i < steps.length - 1 ? (
+              <span className={s.chainConnector} data-chain-connector aria-hidden="true" />
+            ) : null}
+          </li>
+        ))}
+      </ol>
+      <span className={s.chainPulse} data-chain-pulse aria-hidden="true" />
+    </div>
   );
 }
 
@@ -35,10 +49,23 @@ function Todo({ text }) {
 
 export default function CaseStudy({ study }) {
   const scopeRef = useRef(null);
+  const router = useRouter();
   /* Pas de loader sur un case study : il n'appartient qu'à l'entrée du
      site. `ready` est donc vrai d'emblée, et seul le hors-écran est
      masqué. */
   useSiteMotion(scopeRef, true);
+
+  /* Transition de page (V1.1), sens retour : le filet part de la
+     droite. N'existe que sur clic — jamais au premier chargement. */
+  const handleBackClick = useCallback(
+    (href) => (e) => {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      import('../../lib/motion').then((mod) => mod.sweepTo(router, href, { reverse: true }));
+    },
+    [router]
+  );
 
   return (
     <>
@@ -50,10 +77,10 @@ export default function CaseStudy({ study }) {
         </a>
 
         <header className={`${s.shell} ${s.nav}`}>
-          <Link className={s.navMark} href="/">
+          <Link className={s.navMark} href="/" onClick={handleBackClick('/')}>
             {copy.nav.mark}
           </Link>
-          <Link className={s.back} href="/#work">
+          <Link className={s.back} href="/#work" onClick={handleBackClick('/#work')}>
             ← {copy.caseStudy.back}
           </Link>
         </header>
@@ -95,7 +122,9 @@ export default function CaseStudy({ study }) {
                     <div className={s.figures}>
                       {section.figures.map((fig) => (
                         <div key={fig.value} className={s.figureBlock}>
-                          <p className={s.figure}>{fig.value}</p>
+                          <p className={s.figure} data-counter>
+                            {fig.value}
+                          </p>
                           <p className={`${s.meta} ${s.figureCaption}`}>{fig.caption}</p>
                         </div>
                       ))}
@@ -138,7 +167,7 @@ export default function CaseStudy({ study }) {
 
         <footer className={`${s.shell} ${s.footer}`}>
           <p className={s.meta}>{copy.footer.line}</p>
-          <Link className={s.back} href="/#work">
+          <Link className={s.back} href="/#work" onClick={handleBackClick('/#work')}>
             ← {copy.caseStudy.back}
           </Link>
         </footer>

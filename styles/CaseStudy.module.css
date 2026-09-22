@@ -201,9 +201,25 @@
 
 /* La chaîne ouvre la section : elle dit le quoi, la prose qui suit dit
    le pourquoi. Pas de filet au-dessus — le titre la porte déjà. */
+
+/* V1.1 — le moment fort du site (DESIGN.md §4). À l'entrée dans le
+   viewport, les boîtes ET leurs connecteurs se tracent l'un après
+   l'autre, puis une impulsion parcourt la chaîne une fois. Tout
+   descend de la même primitive que le tracé des filets ailleurs sur
+   le site — scaleX/scaleY 0→1 — jamais d'opacité ni de scale de bloc.
+
+   Chaque boîte n'a plus une seule bordure CSS : elle est composée de
+   4 filets 1px indépendants (`chainEdge`), un par côté, pour que
+   chacun puisse se tracer sur son propre axe. Coin à angle droit —
+   4 segments disjoints ne peuvent pas partager un border-radius
+   continu ; en garder un aurait demandé du SVG, exactement ce que ce
+   schéma a délibérément quitté (voir plus haut). */
+
+.chainWrap { position: relative; margin: 0 0 var(--s5); }
+
 .chain {
   display: flex;
-  margin: 0 0 var(--s5);
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -213,8 +229,6 @@
   flex: 1 1 0;
   min-width: 0;
   padding: var(--s2) var(--s1);
-  border: var(--border);
-  border-radius: var(--radius);
   font-family: var(--font-mono);
   font-size: var(--t-meta);
   line-height: var(--leading-body);
@@ -226,15 +240,51 @@
 
 .chainStep + .chainStep { margin-left: var(--s4); }
 
-/* Connecteur : un filet 1px, aucun glyphe de flèche. L'ordre est porté
-   par la liste ordonnée, pas par un dessin. */
-.chainStep:not(:last-child)::after {
-  content: '';
+/* Les 4 filets d'une boîte. Chacun se trace sur son propre axe,
+   origine choisie pour dessiner un tracé continu dans le sens
+   horaire : haut (→), droite (↓), bas (←), gauche (↑). */
+.chainEdge {
+  position: absolute;
+  background: var(--line);
+}
+
+.chainEdgeTop,
+.chainEdgeBottom { left: 0; right: 0; height: 1px; }
+.chainEdgeTop { top: 0; transform-origin: left center; }
+.chainEdgeBottom { bottom: 0; transform-origin: right center; }
+
+.chainEdgeLeft,
+.chainEdgeRight { top: 0; bottom: 0; width: 1px; }
+.chainEdgeRight { right: 0; transform-origin: top center; }
+.chainEdgeLeft { left: 0; transform-origin: bottom center; }
+
+.chainLabel { position: relative; }
+
+/* Connecteur — un filet 1px réel (plus un ::after) : il faut un
+   élément DOM pour l'animer indépendamment des bordures de boîte. */
+.chainConnector {
   position: absolute;
   top: 50%;
   left: 100%;
   width: var(--s4);
-  border-top: 1px solid var(--text);
+  height: 1px;
+  background: var(--text);
+  transform-origin: left center;
+}
+
+/* L'impulsion : un carré plein qui parcourt la chaîne une fois, après
+   le tracé. Taille fixe, jamais de --accent — un seul bleu sur le
+   site (DESIGN.md §3), et ce n'est pas lui. */
+.chainPulse {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--text);
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ---- stack ------------------------------------------------------ */
@@ -287,15 +337,19 @@
   .sectionTitle { font-size: var(--t-h3); }
   .figure { font-size: var(--t-h2); }
 
-  /* cinq labels mono ne tiennent pas sur 335px : la chaîne se redresse */
+  /* cinq labels mono ne tiennent pas sur 335px : la chaîne se redresse.
+     Même séquence, du haut vers le bas : le connecteur passe à la
+     verticale, l'impulsion suit le même axe que le layout réel plutôt
+     qu'un axe supposé par le point de rupture (lib/motion.js lit la
+     position des boîtes, pas la largeur d'écran). */
   .chain { flex-direction: column; }
   .chainStep + .chainStep { margin-left: 0; margin-top: var(--s4); }
-  .chainStep:not(:last-child)::after {
+  .chainConnector {
     top: 100%;
     left: 50%;
-    width: 0;
+    width: 1px;
     height: var(--s4);
-    border-top: none;
-    border-left: 1px solid var(--text);
+    transform-origin: top center;
   }
+  .chainPulse { top: 0; left: 50%; margin-top: 0; margin-left: -3px; }
 }

@@ -168,7 +168,12 @@
   grid-column: 1 / -1;
   margin: var(--s4) 0 0;
   font-size: var(--t-hero);
-  font-weight: 500;
+  font-weight: 500; /* repli si font-variation-settings n'est pas supporté */
+  /* --wght : repos à 500 (graisse finale) tant que JS n'a pas pris la
+     main. lib/motion.js l'anime de 300 à 500 au premier reveal — voir
+     data-reveal-weight en page et DESIGN.md §4. */
+  --wght: 500;
+  font-variation-settings: 'wght' var(--wght);
   line-height: var(--leading-display);
   letter-spacing: var(--track-display);
 }

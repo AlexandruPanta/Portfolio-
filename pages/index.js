@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Meta from '../components/Meta';
 import s from '../styles/Home.module.css';
 import copy from '../content/copy';
@@ -50,6 +51,22 @@ function Loader({ onDone }) {
 
 export default function Home() {
   const scopeRef = useRef(null);
+  const heroRef = useRef(null);
+  const heroPrimedRef = useRef(false);
+  const router = useRouter();
+
+  /* Transition de page (V1.1) — n'existe que sur clic, jamais au
+     premier chargement. Laisse passer les clics modifiés (nouvel
+     onglet, etc.) sans intercepter. */
+  const handleProjectClick = useCallback(
+    (href) => (e) => {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      import('../lib/motion').then((mod) => mod.sweepTo(router, href));
+    },
+    [router]
+  );
 
   /* Le loader ne joue qu'au premier chargement réel. En navigation
      client — retour depuis un case study — le module est déjà évalué,
@@ -70,6 +87,37 @@ export default function Home() {
     setReady(false);
     setLoading(true);
   }, []);
+
+  /* Lu en direct (pas via une fermeture d'effet) : au moment où le
+     module motion arrive, seul l'état COURANT de `ready` dit si le
+     loader couvre encore l'écran. */
+  const readyRef = useRef(ready);
+  readyRef.current = ready;
+
+  /* Le ramp de graisse du hero (V1.1) — voir lib/motion.js. On ne
+     l'amorce que si le loader est encore visible à cet instant précis :
+     c'est la seule fenêtre où masquer le nom est sûr. Si le module
+     arrive après coup (connexion lente, loader déjà levé), le hero
+     reste tel quel — jamais masqué après avoir été vu. */
+  useEffect(() => {
+    if (prefersReducedMotion()) return undefined;
+    let cancelled = false;
+    import('../lib/motion').then((mod) => {
+      if (cancelled || !heroRef.current) return;
+      if (!readyRef.current) {
+        mod.primeHero(heroRef.current);
+        heroPrimedRef.current = true;
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ready || !heroPrimedRef.current || !heroRef.current) return;
+    import('../lib/motion').then((mod) => mod.revealHero(heroRef.current));
+  }, [ready]);
 
   useSiteMotion(scopeRef, ready);
 
@@ -110,7 +158,7 @@ export default function Home() {
                 {copy.hero.index} — <span className={s.metaStrong}>{copy.hero.label}</span>
               </p>
 
-              <h1 className={s.heroName} data-reveal data-reveal-delay="0.06">
+              <h1 className={s.heroName} ref={heroRef}>
                 {copy.hero.name}
               </h1>
 
@@ -148,7 +196,11 @@ export default function Home() {
                           et donc sans état de survol. */}
                       <h2 className={s.workTitle}>
                         {project.href ? (
-                          <Link className={s.workLink} href={project.href}>
+                          <Link
+                            className={s.workLink}
+                            href={project.href}
+                            onClick={handleProjectClick(project.href)}
+                          >
                             {project.title}
                           </Link>
                         ) : (
@@ -162,7 +214,9 @@ export default function Home() {
                     <div className={s.workAside}>
                       <p className={s.meta}>{project.tags.join(copy.glyph.dot)}</p>
 
-                      <p className={s.rowFigure}>{project.figure}</p>
+                      <p className={s.rowFigure} data-counter>
+                        {project.figure}
+                      </p>
                       <p className={`${s.meta} ${s.rowFigureCaption}`}>
                         {project.figureCaption}
                       </p>
