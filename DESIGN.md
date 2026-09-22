@@ -314,6 +314,11 @@ un — sinon la colonne de droite est vide.
 Chasse tabulaire obligatoire (`font-variant-numeric: tabular-nums`) : un compteur animé
 ne doit produire **aucun** décalage de mise en page.
 
+Un résultat de case study peut porter **plusieurs** chiffres — `section.figures` est un
+tableau, pas un couple isolé. Même mécanisme quel que soit leur nombre : disposés en
+ligne (`flex-wrap`), ils se replient à la verticale plutôt que de forcer une largeur
+mobile. Zéro variation de gabarit entre une section à un chiffre et une section à deux.
+
 **Chaîne d'architecture** — une `<ol>` en HTML, **pas un SVG**. Filet 1px `--line`,
 angles droits, labels mono `--t-meta`, connecteurs en `::after` (1px `--text`, aucun
 glyphe de flèche). `flex-direction: column` sous 768px. Pas de légende : une liste
@@ -531,8 +536,13 @@ français. **Validé.** Règle en §6.
 
 ## 12 · Case studies
 
-Template : **contexte / problème / contrainte / architecture / résultat chiffré / stack**.
-Le label de section, le titre en `--t-hero`, le contexte démarrant colonne 5.
+Template : **contexte / problème / contrainte / (architecture ou méthode) / résultat
+chiffré / stack**. Le label de section, le titre en `--t-hero`, le contexte démarrant
+colonne 5.
+
+> Le titre de la 4ᵉ section (« L'architecture » ou « La méthode ») est une chaîne de
+> copie dans `content/copy.js`, pas une variation de gabarit : le composant ne sait pas
+> lequel des deux mots il affiche, il lit `section.title` comme n'importe quel autre.
 
 > Les paragraphes de corps sont en `--text`, pas `--text-dim` : la prose EST le contenu
 > de la page, pas une légende. Même règle sur `.workSummary` en home. `--text-dim` reste
@@ -554,9 +564,9 @@ recruteur doit comprendre le rôle avant d'ouvrir le lien.
 
 **Règle éditoriale du (02) SYSTEM** — la section ne liste **que** ce qui apparaît dans un
 case study. Pas de recopie de CV, pas de techno sans preuve derrière. Si ça n'est pas
-dans une des trois pages, ça ne s'affiche pas.
+dans une des deux pages, ça ne s'affiche pas — Homelab n'en a pas (§14).
 
-Les trois pages sortent d'un seul gabarit : `pages/work/[slug].js`, alimenté par
+Les deux pages sortent d'un seul gabarit : `pages/work/[slug].js`, alimenté par
 `content/copy.js`. Zéro variation possible — il n'y a qu'un composant.
 
 ---
@@ -595,17 +605,25 @@ de Vercel seulement, jamais sur *Production*.
 
 ## 14 · En attente de contenu
 
-Rien n'est inventé. Ces marques restent visibles dans `/styleguide` jusqu'à ce que
-l'information arrive.
+Rien n'est inventé. Un seul trou bloquant reste, vérifiable par
+`node scripts/check-todo.mjs` :
 
-- `TODO:` les trois aperçus projets. L'emplacement est réservé au bon ratio, filet 1px,
-  **aucune image de remplacement** — il reste vide jusqu'à l'arrivée des visuels.
-- `TODO:` ZoeCare — *le problème*, *la contrainte*, et un second chiffre publiable.
-- `TODO:` AB Tasty — *le problème*, *la contrainte*, et la chaîne du tag si elle est
-  publiable. Sans elle, pas de schéma : le gabarit en accepte un, on ne l'invente pas.
-- `TODO:` Homelab — *le problème*, *la contrainte*, *l'architecture* et *le résultat*.
-  Quatre sur cinq : la page existe et le gabarit tient, mais elle n'est pas publiable
-  en l'état.
+- **`site.origin`** — le domaine. L'URL canonique et les `og:image` absolues en
+  dépendent ; tant qu'il n'est pas fixé, ni l'une ni l'autre ne sont émises (§13).
+
+Ce qui reste ouvert mais **ne bloque pas** le build, parce que ce sont des champs
+optionnels et non des trous :
+
+- Les aperçus image des trois projets (`preview: null` sur les trois lignes de la
+  home). Sans image, pas de révélation au survol : la ligne tient avec son chiffre.
+  Ils reviendront avec les photos, sans qu'aucune autre pièce n'ait à changer.
+- ZoeCare — un second chiffre pour *le résultat* au-delà de « 2 EHPAD équipés » et
+  « 30 capteurs déployés », s'il en existe un de publiable.
+- AB Tasty — la chaîne exacte du tag pour *(03) La méthode*, si elle devient
+  publiable : le gabarit accepte un schéma, il ne l'invente pas.
+
+Homelab n'a pas de case study — quatre sections sur cinq auraient été des `todo` :
+la ligne reste sur la home, sans lien et sans survol (§11).
 
 ---
 

@@ -89,10 +89,16 @@ export default function CaseStudy({ study }) {
                 <div className={s.sectionBody}>
                   <h2 className={s.sectionTitle}>{section.title}</h2>
 
-                  {section.figure ? (
-                    <div className={s.figureBlock}>
-                      <p className={s.figure}>{section.figure}</p>
-                      <p className={`${s.meta} ${s.figureCaption}`}>{section.figureCaption}</p>
+                  {/* Un ou plusieurs chiffres par résultat : la grammaire ne
+                      change pas selon leur nombre. */}
+                  {section.figures ? (
+                    <div className={s.figures}>
+                      {section.figures.map((fig) => (
+                        <div key={fig.value} className={s.figureBlock}>
+                          <p className={s.figure}>{fig.value}</p>
+                          <p className={`${s.meta} ${s.figureCaption}`}>{fig.caption}</p>
+                        </div>
+                      ))}
                     </div>
                   ) : null}
 

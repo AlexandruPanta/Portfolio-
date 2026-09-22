@@ -28,21 +28,26 @@ const zoecare = {
     {
       num: '01',
       title: 'Le problème',
-      todo: 'à écrire — détection de chute et de présence en EHPAD.',
+      body: [
+        'Avant ZoeCare, la trace d’une chute, c’était une ligne saisie après coup, à la main, dans un tableur ou un formulaire. L’objectif était double : que les soignants et le cadre de santé soient alertés au moment où elle arrive, et qu’elle devienne une donnée qu’on peut suivre, établissement par établissement.',
+      ],
     },
     {
       num: '02',
       title: 'La contrainte',
-      todo:
-        'à écrire — ce qui rendait la solution non évidente (multi-pièces, faux positifs, exigences SSI).',
+      body: [
+        'Pas de caméra, et rien à porter pour le résident : des ESP32 mesurent les variations du signal Wi-Fi dans la pièce. C’est un signal très sensible, qui offre peu de paramètres exploitables — les faux positifs sont le vrai problème. La détection combine donc plusieurs étages de filtrage, un seuil de présence et un modèle entraîné.',
+        'Le tout sous exigences SSI et RGPD : données sécurisées, chaque connexion journalisée. Et sans budget : uniquement de l’open source, sur des instances OVH.',
+      ],
     },
     {
       num: '03',
       title: 'L’architecture',
       chain: ['Capteur', 'Passerelle', 'Données', 'Alerte', 'Soignant'],
       body: [
-        'Le schéma montre le chemin d’une alerte, du capteur au soignant. Trois décisions le tiennent.',
-        'Les données capteurs sont stockées en deux niveaux : Cassandra absorbe le flux temps réel, Supabase garde ce qui doit durer, sous un modèle de sécurité en Row-Level Security. C’est un arbitrage coût/performance, pas une préférence d’outil.',
+        'Le schéma montre le chemin d’une alerte, du capteur au soignant. J’ai construit cette chaîne seul, à trois exceptions près : l’émission des alertes depuis les capteurs, leur mise à jour, et le modèle de détection.',
+        'Quand plusieurs chutes arrivent en même temps, les alertes sont retenues cinq secondes puis regroupées en une seule : le soignant reçoit un message clair, pas une rafale.',
+        'Le serveur a été optimisé pour encaisser le volume de télémétrie. Cassandra absorbe le flux temps réel ; les données plus anciennes sont sauvegardées puis extraites vers un serveur physique au bureau, qui en garde une copie et libère l’espace en ligne. Les applications reposent sur Supabase, sous un modèle de sécurité en Row-Level Security.',
         'La flotte Raspberry Pi se met à jour à distance, en OTA signée SHA-256, conformément aux exigences SSI. Une mise à jour qui échoue revient d’elle-même à la version précédente : une passerelle en panne, c’est une zone qui n’est plus surveillée.',
         'Aucun port SSH n’est ouvert en entrée. La maintenance passe par un VPN WireGuard, les services tournent sous systemd derrière un reverse proxy Nginx en SSL/TLS, sur OVH.',
       ],
@@ -50,8 +55,10 @@ const zoecare = {
     {
       num: '04',
       title: 'Le résultat',
-      figure: '2',
-      figureCaption: 'EHPAD équipés · En production',
+      figures: [
+        { value: '2', caption: 'EHPAD équipés · En production' },
+        { value: '30', caption: 'Capteurs déployés' },
+      ],
       body: ['Déployé et en production dans 2 EHPAD.'],
     },
   ],
@@ -80,24 +87,31 @@ const abTasty = {
     {
       num: '01',
       title: 'Le problème',
-      todo: 'à écrire — temps de blocage du tag sur les sites clients.',
+      body: [
+        'Un client grand compte se plaignait de la latence du tag EmotionsAI sur ses sites en production. Au lancement, son code d’initialisation bloquait plus de 120 ms — autant de temps pendant lequel la page du client restait figée.',
+      ],
     },
     {
       num: '02',
       title: 'La contrainte',
-      todo: 'à écrire — ce qui rendait la solution non évidente.',
+      body: [
+        'Le score EmotionsAI devait rester strictement identique avant et après : la moindre différence aurait faussé les calculs qui en dépendent. Le code était ancien, et devait continuer de tourner sur les navigateurs anciens qu’il supportait. J’étais seul dessus.',
+      ],
     },
     {
       num: '03',
-      title: 'L’architecture',
-      todo:
-        'à écrire — le chemin critique du chargement. Pas de chaîne fournie, donc pas de schéma : le gabarit en accepte un, il ne l’invente pas.',
+      /* Chaîne de copie, pas une variation de gabarit : ce case study décrit
+         une démarche de diagnostic, pas une architecture au sens de ZoeCare. */
+      title: 'La méthode',
+      body: [
+        'Il a d’abord fallu reproduire le problème : DevTools en conditions 3G simulées, puis contrôle sur un outil de monitoring externe. Le temps se perdait sur une longue liste d’éléments que le tag parcourait en entier, alors que la plupart des cas ne s’appliquaient pas.',
+        'Deux changements : restreindre la liste à ce qui peut réellement s’appliquer, et remplacer le parcours linéaire par une recherche en O(log n) — sans rien casser sur les navigateurs anciens. Le tag optimisé est parti en production.',
+      ],
     },
     {
       num: '04',
       title: 'Le résultat',
-      figure: '−56%',
-      figureCaption: 'Blocking time · 120 ms → 53 ms',
+      figures: [{ value: '−56%', caption: 'Blocking time · 120 ms → 53 ms' }],
       body: ['Blocking time du tag ramené de 120 ms à 53 ms.'],
     },
   ],
