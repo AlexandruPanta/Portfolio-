@@ -426,7 +426,7 @@ instantanément, site 100 % lisible. Déjà câblé dans `tokens.css`.
 ### V1.1 — révision assumée : tout dérive du tracé
 
 > Le § de la commande d'origine qui posait « un seul effet signature sur tout le
-> site » est ici révisé à dessein : quatre mécanismes de mouvement s'ajoutent.
+> site » est ici révisé à dessein : des mécanismes de mouvement s'ajoutent.
 > Chacun reprend `scaleX`/`scaleY: 0→1`, `--ease`, `--d-base`, `--stagger` — les
 > mêmes primitives, jamais une nouvelle courbe ni une nouvelle durée. Rien de
 > nouveau qui ne descende du tracé.
@@ -448,18 +448,7 @@ propre à un seul schéma, pas un primitif générique — les fondre ensemble a
 risque le mécanisme déjà en production sur tout le reste du site. Même garde que
 `trace()`/`reveals()` : ne touche jamais un élément déjà visible à l'écran.
 
-**B · Transition de page.** Au clic sur un lien vers un projet ou vers « retour aux
-projets », un filet 1px (`position: fixed`, pleine hauteur, 1px de large) balaie
-l'écran — `x: 0 → largeur de la fenêtre`, `--ease`, `--d-base` — puis la navigation a
-lieu (`router.push`) et la page arrivée joue son reveal existant, sans rien de
-nouveau. Retour : même filet, `x` part du bord droit vers `0`. Vit dans
-`lib/motion.js` (`sweepTo()`) plutôt qu'un fichier séparé, pour partager l'instance
-GSAP déjà chargée par `useSiteMotion` — un second `import()` aurait dupliqué GSAP dans
-un chunk distinct. N'existe que sur clic (`onClick` des `<Link>` concernés, avec
-`preventDefault`) : jamais au premier chargement, et le loader ne rejoue toujours
-jamais en navigation client — ce mécanisme n'y touche pas.
-
-**C · Hero — la graisse variable.** Satoshi est une police variable ; au premier
+**B · Hero — la graisse variable.** Satoshi est une police variable ; au premier
 chargement seulement, « Alex Panta » monte de la graisse 300 à sa graisse finale (500)
 pendant le reveal. `--wght` est un CSS custom property numérique que GSAP anime
 directement ; sa valeur de repos (500, posée en CSS) fait qu'un chargement sans JS
@@ -474,7 +463,7 @@ chaque image sur un texte de 208px coûterait un reflow par frame.
 > Corrigé par `primeHero()`/`revealHero()`, dédiées, qui contournent ce filtre pour ce
 > seul élément — voir l'encadré plus haut sur la garantie qui les rend sûres.
 
-**D · Compteurs (§6, câblés maintenant).** `2`, `−56%`, `17 ans`, `30` comptent de 0 à
+**C · Compteurs (§6, câblés maintenant).** `2`, `−56%`, `17 ans`, `30` comptent de 0 à
 leur valeur au premier passage à l'écran — `[data-counter]`, une fonction dédiée
 (`counters()`) qui lit le texte SSR (déjà la valeur finale), en extrait signe, nombre
 et suffixe par une expression régulière, et anime un objet JS simple dont
@@ -483,10 +472,19 @@ et suffixe par une expression régulière, et anime un objet JS simple dont
 change. Sans JS, le texte SSR reste la valeur finale — rien à compter, rien à faire.
 
 **Vérifié** — `prefers-reduced-motion` (bascule réelle via `reducedMotion: 'reduce'`
-en contexte Playwright, pas une lecture de code) sur les quatre mécanismes : zéro
-élément masqué, zéro animation en cours, le filet de balayage n'est jamais créé, le
-hero reste en permanence à `--wght: 500`. `scripts/check-reduced-motion.mjs` les
-couvre tous les quatre, sur la home et une case study.
+en contexte Playwright, pas une lecture de code) sur les trois mécanismes : zéro
+élément masqué, zéro animation en cours, le hero reste en permanence à `--wght: 500`.
+`scripts/check-reduced-motion.mjs` les couvre tous les trois, sur la home et une case
+study.
+
+### Transition de page — essai retiré, navigation simple pour l'instant
+
+Une première version (un filet 1px balayant l'écran au clic, `sweepTo()` dans
+`lib/motion.js`) a été construite, vérifiée par sonde programmatique, puis **retirée**
+avant mise en ligne : elle se lisait comme un bug d'affichage plutôt qu'une intention.
+Entre les pages, la navigation Next.js standard, sans effet, le temps qu'une V1.2 la
+remplace par un élément partagé (le titre cliqué devient le titre du hero — voir la
+prochaine révision de ce document une fois validée).
 
 ---
 
@@ -771,6 +769,17 @@ portée** : scopée, le dégradé de l'ancien thème reviendrait sur la moindre 
 - La navigation liste les trois sections ; les trois ancres existent.
 - ZoeCare et AB Tasty sont de vrais `<a>`. Homelab n'a pas de page : sa ligne reste,
   sans lien et sans état de survol.
+
+**Régression corrigée** — un `@media (max-width: 767px)` entier avait disparu de
+`styles/Home.module.css` dans le commit `3045f45` : un nettoyage CSS trop large a
+emporté avec lui la collapse de grille à 4 colonnes, l'empilement de la ligne projet,
+le masquage des libellés de nav et l'affichage de l'aperçu au doigt. **En production
+depuis ce commit**, sans que rien ne l'ait signalé — trouvé en revérifiant le gabarit
+adresse à 375px pour un tout autre motif. Restauré, adapté aux évolutions intervenues
+depuis (chiffres toujours visibles, aperçu en `<img>` optionnel). La règle
+`.splitLine { overflow: hidden }`, disparue dans le même commit, est réinstallée en
+global dans `tokens.css` plutôt que dupliquée par page — cause structurelle du même
+type de perte si elle était restée locale à un module.
 
 ## 17 · Checklist avant chaque bloc
 

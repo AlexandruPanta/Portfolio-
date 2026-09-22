@@ -235,9 +235,9 @@ export const fr = {
   contact: {
     index: '(03)',
     label: 'Contact',
-    email: 'alexandru.panta2003@gmail.com',
-    emailLocal: 'alexandru.panta2003',
-    emailDomain: '@gmail.com',
+    email: 'alex@alexpanta.dev',
+    emailLocal: 'alex',
+    emailDomain: '@alexpanta.dev',
     status: 'Disponible — CDI',
     statusStrong: true,
     links: [

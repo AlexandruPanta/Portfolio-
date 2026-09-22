@@ -198,6 +198,14 @@ body:has([data-editorial]) {
 
 [data-trace] { transform-origin: left center; }
 
+/* Masque de ligne pour le reveal SplitText (data-reveal-lines dans
+   lib/motion.js). Global — pas dans un module de page — parce que
+   home ET case studies en ont besoin, et que les deux chargent des
+   feuilles de style séparées. Sans lui, une ligne qui glisse depuis
+   translateY(100%) déborde visiblement de son paragraphe au lieu
+   d'être masquée par son propre conteneur pendant l'entrée. */
+.splitLine { overflow: hidden; }
+
 /* AUCUN état masqué n'est posé par le CSS.
    Une règle adossée à html.js ouvrirait une fenêtre : la classe est
    posée avant la peinture, alors que lib/motion.js arrive en import()

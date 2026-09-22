@@ -345,6 +345,68 @@
   object-fit: cover;
 }
 
+/* ---- responsive : hero, liste projets, nav, loader ------------- */
+/* RÉGRESSION CORRIGÉE — ce bloc entier avait disparu par erreur dans
+   un edit du commit 3045f45 (nettoyage CSS trop large, a emporté ce
+   qui suivait avec ce qui devait partir). Resté en production depuis
+   sans que rien ne l'ait signalé : à 375px, la grille ne repassait
+   jamais à 4 colonnes, la ligne projet ne s'empilait pas, et le nav
+   affichait ses libellés en toutes lettres au lieu des seuls numéros
+   — trouvé en revérifiant le gabarit adresse pour ce même correctif. */
+@media (max-width: 767px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .heroLabel,
+  .heroName,
+  .heroLine,
+  .heroFoot,
+  .sectionLabel,
+  .sectionIntro { grid-column: 1 / -1; }
+
+  .hero { padding-block: var(--s6); }
+  .section { padding-block: var(--s6); }
+  .sectionHead { margin-bottom: var(--s5); }
+  .heroLine { margin-top: var(--s4); }
+  .heroFoot { margin-top: var(--s4); }
+
+  .workRow {
+    grid-template-columns: var(--s4) 1fr;
+    padding-block: var(--s3);
+  }
+  .workAside {
+    grid-column: 2;
+    align-items: flex-start;
+    text-align: left;
+    margin-top: var(--s2);
+  }
+
+  /* Sous 768px les libellés font passer la nav à trois lignes et 99px
+     de haut. Seuls les numéros restent visibles ; le libellé demeure
+     dans le nom accessible du lien. */
+  .navLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .navList { gap: var(--s2); }
+  .loaderCount { font-size: var(--t-h3); }
+
+  /* L'aperçu image (optionnel) ne doit pas dépendre d'un survol qui
+     n'existe pas au doigt. */
+  .preview { width: auto; min-width: 0; opacity: 1; visibility: visible; }
+}
+
+/* Pas de survol au doigt, quelle que soit la largeur : l'aperçu ne se
+   cache pas, il est simplement là s'il existe. */
+@media (hover: none) {
+  .preview { opacity: 1; visibility: visible; }
+}
+
 /* ---- (02) system — seule section inversée du site ---------------- */
 /* Pleine largeur : la portée peint de bord à bord, le contenu garde
    ses marges. */
