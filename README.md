@@ -2,7 +2,7 @@
 
 My personal developer portfolio, presenting my work as a **full-stack developer focused on IoT, systems and security**.
 
-🔗 **Live:** [portfolio-bice-nine-45.vercel.app](https://portfolio-bice-nine-45.vercel.app)
+🔗 **Live:** [portfolio-bice-nine-45.vercel.app](https://alexpanta.dev)
 
 ## ✨ Features
 
