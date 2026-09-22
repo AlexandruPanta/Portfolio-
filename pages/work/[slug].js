@@ -1,6 +1,5 @@
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import Meta from '../../components/Meta';
 import s from '../../styles/CaseStudy.module.css';
 import copy from '../../content/copy';
@@ -11,7 +10,7 @@ const studies = Object.values(copy.caseStudies);
 /* Chaîne d'architecture — une liste ordonnée, pas un dessin.
    L'ordre est porté par le <ol>. Les 4 bords de chaque boîte et les
    connecteurs sont des éléments réels (pas des ::after) : lib/motion.js
-   doit pouvoir les cibler pour le tracé de la V1.1 — voir DESIGN.md §4.
+   doit pouvoir les cibler pour le tracé de la V1.1 — voir DESIGN.md §8.
    Sans JS, ou en mouvement réduit, ils sont posés à l'état final par le
    CSS : la chaîne se lit intégralement immobile. */
 function Chain({ steps }) {
@@ -49,23 +48,10 @@ function Todo({ text }) {
 
 export default function CaseStudy({ study }) {
   const scopeRef = useRef(null);
-  const router = useRouter();
   /* Pas de loader sur un case study : il n'appartient qu'à l'entrée du
      site. `ready` est donc vrai d'emblée, et seul le hors-écran est
      masqué. */
   useSiteMotion(scopeRef, true);
-
-  /* Transition de page (V1.1), sens retour : le filet part de la
-     droite. N'existe que sur clic — jamais au premier chargement. */
-  const handleBackClick = useCallback(
-    (href) => (e) => {
-      if (e.defaultPrevented || e.button !== 0) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      e.preventDefault();
-      import('../../lib/motion').then((mod) => mod.sweepTo(router, href, { reverse: true }));
-    },
-    [router]
-  );
 
   return (
     <>
@@ -77,10 +63,10 @@ export default function CaseStudy({ study }) {
         </a>
 
         <header className={`${s.shell} ${s.nav}`}>
-          <Link className={s.navMark} href="/" onClick={handleBackClick('/')}>
+          <Link className={s.navMark} href="/">
             {copy.nav.mark}
           </Link>
-          <Link className={s.back} href="/#work" onClick={handleBackClick('/#work')}>
+          <Link className={s.back} href="/#work">
             ← {copy.caseStudy.back}
           </Link>
         </header>
@@ -167,7 +153,7 @@ export default function CaseStudy({ study }) {
 
         <footer className={`${s.shell} ${s.footer}`}>
           <p className={s.meta}>{copy.footer.line}</p>
-          <Link className={s.back} href="/#work" onClick={handleBackClick('/#work')}>
+          <Link className={s.back} href="/#work">
             ← {copy.caseStudy.back}
           </Link>
         </footer>

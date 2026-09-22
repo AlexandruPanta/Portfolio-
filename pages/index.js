@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import Meta from '../components/Meta';
 import s from '../styles/Home.module.css';
 import copy from '../content/copy';
@@ -53,20 +52,6 @@ export default function Home() {
   const scopeRef = useRef(null);
   const heroRef = useRef(null);
   const heroPrimedRef = useRef(false);
-  const router = useRouter();
-
-  /* Transition de page (V1.1) — n'existe que sur clic, jamais au
-     premier chargement. Laisse passer les clics modifiés (nouvel
-     onglet, etc.) sans intercepter. */
-  const handleProjectClick = useCallback(
-    (href) => (e) => {
-      if (e.defaultPrevented || e.button !== 0) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      e.preventDefault();
-      import('../lib/motion').then((mod) => mod.sweepTo(router, href));
-    },
-    [router]
-  );
 
   /* Le loader ne joue qu'au premier chargement réel. En navigation
      client — retour depuis un case study — le module est déjà évalué,
@@ -196,11 +181,7 @@ export default function Home() {
                           et donc sans état de survol. */}
                       <h2 className={s.workTitle}>
                         {project.href ? (
-                          <Link
-                            className={s.workLink}
-                            href={project.href}
-                            onClick={handleProjectClick(project.href)}
-                          >
+                          <Link className={s.workLink} href={project.href}>
                             {project.title}
                           </Link>
                         ) : (

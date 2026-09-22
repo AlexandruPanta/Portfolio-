@@ -9,9 +9,7 @@
      - zéro animation et zéro transition en cours
      - le loader n'apparaît jamais : il ne doit pas retarder le contenu
      - V1.1 : la chaîne ZoeCare est entièrement tracée au repos, le
-       hero est à sa graisse finale (500) sans jamais passer par 300,
-       et un clic sur un projet ne déclenche aucune transition de page
-       (le filet 1px de balayage ne doit jamais apparaître)
+       hero est à sa graisse finale (500) sans jamais passer par 300
 
    Usage :  node scripts/check-reduced-motion.mjs [origine]
 */
@@ -97,33 +95,6 @@ for (const path of PAGES) {
   );
   if (worstMasked) console.log(`         ${samples.find((s) => s.masked.length)?.masked.join(' | ')}`);
 }
-
-/* Transition de page : sous mouvement réduit, aucun filet de balayage
-   ne doit jamais apparaître — la navigation doit être instantanée. */
-await page.goto(ORIGIN + '/', { waitUntil: 'networkidle' });
-await page.evaluate(() => {
-  window.__sweepSeen = false;
-  new MutationObserver((muts) => {
-    for (const m of muts) {
-      for (const n of m.addedNodes) {
-        if (n.style && n.style.position === 'fixed' && n.style.width === '1px') {
-          window.__sweepSeen = true;
-        }
-      }
-    }
-  }).observe(document.body, { childList: true });
-});
-const link = page.locator('a[href="/work/zoecare"]').first();
-await link.click();
-await page.waitForTimeout(1200);
-const sweepSeen = await page.evaluate(() => window.__sweepSeen);
-const onCaseStudy = page.url().includes('/work/zoecare');
-const transitionOk = !sweepSeen && onCaseStudy;
-if (!transitionOk) failed = true;
-console.log(`${transitionOk ? '  OK  ' : '  ÉCHEC'} transition de page (clic projet)`);
-console.log(
-  `         filet de balayage jamais créé : ${!sweepSeen} · navigation effectuée : ${onCaseStudy}`
-);
 
 await browser.close();
 console.log(failed ? '\nreduced-motion : ÉCHEC' : '\nreduced-motion : conforme sur toutes les pages');
