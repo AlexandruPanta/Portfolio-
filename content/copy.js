@@ -132,9 +132,7 @@ export const fr = {
      première chose qu'un recruteur voit. */
   site: {
     name: 'Alex Panta',
-    /* TODO: DOMAINE — l'URL canonique et les og:image absolues en
-       dépendent. LinkedIn refuse une og:image relative. */
-    origin: 'TODO: DOMAINE',
+    origin: 'https://alexpanta.dev',
     locale: 'fr_FR',
   },
 
