@@ -38,6 +38,6 @@ Then open [http://localhost:3000](http://localhost:3000).
 
 ## 📫 Contact
 
-- Portfolio: [portfolio-bice-nine-45.vercel.app](https://alexpanta.dev)
+- Portfolio: [https://alexpanta.dev](https://alexpanta.dev)
 - LinkedIn: [Alexandru Panta](https://www.linkedin.com/in/alexandru-panta-4bb0a2261/)
 - Email: alexandru.panta2003@gmail.com
