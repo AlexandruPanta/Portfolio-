@@ -67,7 +67,7 @@ de §6. Même palette, déclarée une seule fois.
 | `--t-h2` | `clamp(2rem, 5vw, 4.5rem)` |
 | `--t-h3` | `clamp(1.25rem, 2vw, 1.75rem)` |
 | `--t-body` | `clamp(1rem, 0.885rem + 0.24vw, 1.125rem)` |
-| `--t-meta` | `0.6875rem` — fixe |
+| `--t-meta` | `0.6875rem` (11px) · **`0.75rem` (12px) sous 768px** |
 | `--track-display` | `-0.035em` |
 | `--track-meta` | `0.12em` |
 | `--leading-display` | `0.92` |
@@ -195,9 +195,9 @@ Valeurs en §2, tailles calculées aux largeurs de test ci-dessous.
 | `--t-h2` | 32 | 38 | 72 | 72 | Titre de section, adresse mail du contact. |
 | `--t-h3` | 20 | 20 | 28 | 28 | Titre de projet, intertitre de case study. |
 | `--t-body` | 16 | 16 | 17.6 | 18 | Corps de texte. Palier à 18px dès 1600px. |
-| `--t-meta` | 11 | 11 | 11 | 11 | Labels, tags, nav, footer. |
+| `--t-meta` | 12 | 11 | 11 | 11 | Labels, tags, nav, footer. 12px sous 768px : à 11px littéral, l'audit Lighthouse « font-size » échouait sur mobile. |
 
-Le label meta est **toujours** : mono, 11px, uppercase, `--track-meta`, couleur
+Le label meta est **toujours** : mono, 11px (12px sous 768px), uppercase, `--track-meta`, couleur
 `--text-dim`, le nom de section en `--text`.
 
 ### Familles
@@ -585,7 +585,7 @@ cours, le loader jamais affiché. Conforme sur les deux pages.
 
 | Bloc | Contenu |
 |---|---|
-| Loader | Compteur % en mono sur `--bg`. 1.2s max. |
+| Loader | Compteur % en mono sur `--bg`. 1.2s max, **600ms sous 768px** — même seuil que `startFor()` dans `lib/motion.js`. Panneau plein écran, il occlut le LCP tant qu'il couvre : raccourci sur mobile pour ça, pas pour l'esthétique. |
 | Nav | Filet 1px en bas, mono 11px uppercase, pas de logo image. Sous 768px seuls les numéros restent visibles — les libellés passaient la nav à trois lignes et 99px de haut. Le libellé demeure dans le nom accessible du lien. |
 | Hero | `(00) — ALEX PANTA` / nom en `--t-hero` / une ligne de positionnement / lieu + année en mono. Rien d'autre. Pas de bouton. |
 | (01) Work | 3 projets en liste éditoriale : ligne, numéro, titre, contexte, tags mono, chiffre toujours visible. Pas de cartes. L'aperçu image est **optionnel** — sans lui, pas de révélation au survol, la ligne tient avec son chiffre. Reste sur papier. |

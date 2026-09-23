@@ -17,7 +17,11 @@ function Loader({ onDone }) {
   const barRef = useRef(null);
 
   useEffect(() => {
-    const total = 1200;
+    /* 600ms sous 768px, 1200ms au-dessus — même seuil que startFor()
+       dans lib/motion.js. Sur mobile, le loader est un panneau plein
+       écran qui occlut le LCP : sur CPU bridé, il poussait le Render
+       Delay à ~1.8s. Toujours le même compteur, juste plus court. */
+    const total = typeof window !== 'undefined' && window.innerWidth < 768 ? 600 : 1200;
     const started = performance.now();
     let frame;
 

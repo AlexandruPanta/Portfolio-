@@ -73,7 +73,15 @@
 }
 
 @media (max-width: 767px) {
-  :root { --margin: 20px; }  /* marges latérales mobile */
+  :root {
+    --margin: 20px;  /* marges latérales mobile */
+    /* 12px sous 768px, contre 11px au-dessus : à 11px littéral sur un
+       petit écran, la lisibilité des labels mono passait sous le
+       seuil de l'audit Lighthouse « font-size ». Le poids visuel du
+       système (tout en capitales, --track-meta serré) ne change pas —
+       seule la taille de base bouge d'un cran. */
+    --t-meta: 0.75rem;
+  }
 }
 
 /* ---- 2 bis · THÈME INVERSÉ ----------------------------------
