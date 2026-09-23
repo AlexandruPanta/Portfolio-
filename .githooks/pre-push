@@ -1,0 +1,29 @@
+#!/bin/sh
+# Filet de sécurité — DESIGN.md §18.
+#
+# Trois régressions silencieuses (un var() résolu à la déclaration, un
+# raccourci CSS qui écrase un token, un @media entier disparu dans un
+# edit) sont parties en production dans ce projet sans qu'aucun build
+# ni lint ne les remarque. Ce hook fait tourner la régression visuelle
+# avant tout push vers n'importe quelle branche.
+#
+# Installé via `npm install` (voir le script "prepare" du package.json,
+# qui pointe git sur ce dossier). Contournement explicite si besoin :
+#   git push --no-verify
+
+echo "pre-push : build + régression visuelle…"
+
+npm run build || {
+  echo "pre-push : le build a échoué — push annulé."
+  exit 1
+}
+
+npm run test:visual || {
+  echo "pre-push : régression visuelle détectée — push annulé."
+  echo "  Voir test-results/ pour les captures actual/diff."
+  echo "  Si le changement est voulu : npm run test:visual -- --update-snapshots"
+  echo "  puis recommitter les références avant de pousser."
+  exit 1
+}
+
+echo "pre-push : conforme."

@@ -720,6 +720,12 @@ scripts/check-todo.mjs         garde-fou prebuild contre un trou bloquant publi�
 scripts/make-og.py             génère public/og/*.png (texte en tracés)
 scripts/check-reduced-motion.mjs  vérifie prefers-reduced-motion par bascule
                                 réelle (Playwright + Chrome installé)
+scripts/check-prod.mjs         vérification post-déploiement contre les URL
+                               publiques — npm run check:prod
+playwright.config.js           régression visuelle — channel Chrome installé
+tests/visual/screenshots.spec.js  3 pages × 3 largeurs, reduced-motion émulé
+tests/visual/__screenshots__/  références commitées de la régression visuelle
+.githooks/pre-push             build + régression visuelle avant tout push
 styles/CaseStudy.module.css    habillage du template de case study
 styles/Home.module.css         habillage de la home
 pages/styleguide.js            /styleguide — vérification visuelle du système
@@ -792,3 +798,48 @@ type de perte si elle était restée locale à un module.
 7. Contraste ≥ 4.5:1 sur toute paire texte / fond, dans les deux portées ?
 8. Lisible avec JS désactivé ? Navigable au clavier, focus visible ?
 9. Vérifié à 375, 768, 1440, 1920.
+
+---
+
+## 18 · Filets de sécurité
+
+Trois casses silencieuses en un projet — un token composé résolu à sa déclaration
+(l'anneau de focus de la portée inversée, §2), un raccourci `text-decoration` qui
+écrasait `thickness`/`offset`, et un `@media (max-width: 767px)` entier disparu dans
+un edit trop large (§16) — sans qu'aucun build, lint ou test existant ne les
+remarque. Deux garde-fous automatiques, en réponse.
+
+### Régression visuelle
+
+`tests/visual/screenshots.spec.js`, Playwright. Les 3 pages × 3 largeurs (375, 768,
+1440), `prefers-reduced-motion` émulé pour des captures stables — sinon chaque
+exécution tombe à un instant différent du tracé. `channel: 'chrome'` dans
+`playwright.config.js` : le Chrome déjà installé, rien à télécharger.
+
+> `toHaveScreenshot` sans configuration explicite compare pixel à pixel (défaut
+> `threshold: 0.2`, aucune tolérance de *compte*). Une première version posait
+> `maxDiffPixelRatio: 0.01` — sur une capture pleine page de plusieurs milliers de
+> pixels de haut, 1% représente ~55 000 pixels : un `--accent` entier passé au rouge
+> sur l'adresse de contact (8527 pixels différents, mesuré) passait sous ce seuil,
+> **invisible pour le test**. Un pourcentage de tolérance masque exactement le genre
+> de changement localisé que ce filet existe pour attraper. Retiré : le défaut de
+> Playwright est le bon calibrage ici.
+
+Références commitées dans `tests/visual/__screenshots__/`, régénérées après le
+passage de `--t-meta` à 12px sous 768px — pas avant, pour qu'elles reflètent l'état
+voulu et non un état à corriger. `npm run test:visual` (alias `playwright test`),
+lancé par un hook `pre-push` (`.githooks/pre-push`, activé via
+`git config core.hooksPath .githooks`, posé automatiquement par le script `prepare`
+au `npm install`). Contournement explicite : `git push --no-verify`.
+
+Déterministe sur cette machine uniquement — les références sont un rendu de police
+propre à cet OS. Les régénérer sur une autre machine ou en CI sans les recommitter
+ferait échouer la comparaison sur un rendu différent, pas sur une vraie régression.
+
+### Vérification post-déploiement
+
+`scripts/check-prod.mjs` (`npm run check:prod`), contre les vraies URL publiques, pas
+localhost : apex en 200, `www` en 308 vers l'apex, l'URL `.vercel.app` du CV
+accessible (redirection Vercel suivie), `mailto:` intact et non réécrit par
+Cloudflare, `canonical` et `og:image` en URL absolue sur les 3 pages. Un seul échec
+suffit à sortir en erreur — pensé pour un pipeline, pas pour une lecture en diagonale.
