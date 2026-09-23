@@ -15,3 +15,10 @@ dist/
 test-results/
 playwright-report/
 blob-report/
+
+# Fichiers d'instructions d'agent — locaux au poste de travail, hors dépôt.
+CLAUDE.md
+AGENTS.md
+.claude/
+.mcp.json
+.cursor/

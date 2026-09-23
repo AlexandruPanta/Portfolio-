@@ -9,7 +9,7 @@ Version 0.2 · étape 0 validée · route de contrôle : `/styleguide`
 
 ## 1 · Intention
 
-Prouver que je construis des systèmes. Pas lister des logos de technos.
+Prouver la construction de systèmes. Pas l'accumulation de logos de technos.
 
 Le site doit se lire comme une **fiche technique d'instrument** ou une **revue de
 design imprimée**. Cible : recruteurs CDI en IoT/embarqué et medtech/e-santé,
@@ -339,7 +339,7 @@ ailleurs** : `<wbr>` posé entre la partie locale et le domaine, avec
 `word-break: keep-all` et `overflow-wrap: normal` pour que la partie locale ne se coupe
 jamais au milieu. Gabarit vérifiable dans `/styleguide`, section (11).
 
-**Grain** — écarté, définitivement. Ne pas reproposer.
+**Grain** — écarté, définitivement. Hors système.
 
 ---
 
@@ -793,16 +793,16 @@ depuis (chiffres toujours visibles, aperçu en `<img>` optionnel). La règle
 global dans `tokens.css` plutôt que dupliquée par page — cause structurelle du même
 type de perte si elle était restée locale à un module.
 
-## 17 · Checklist avant chaque bloc
+## 17 · Checklist de conformité par bloc
 
-1. Relire §9. Aucun interdit présent ?
-2. Aucune valeur de design hors token ? `grep -nE "#[0-9A-Fa-f]{3,8}|[0-9]+(px|rem)"` sur le CSS.
-3. Label meta présent sur la section ?
-4. Rupture d'alignement volontaire présente ?
-5. Espacement inter-sections ≥ `--s7` desktop, `--s6` mobile ?
-6. Budget accent toujours ≤ 3 en home ?
-7. Contraste ≥ 4.5:1 sur toute paire texte / fond, dans les deux portées ?
-8. Lisible avec JS désactivé ? Navigable au clavier, focus visible ?
+1. §9 respecté : aucun motif interdit présent.
+2. Aucune valeur de design hors token (`grep -nE "#[0-9A-Fa-f]{3,8}|[0-9]+(px|rem)"` sur le CSS).
+3. Label meta présent sur la section.
+4. Rupture d'alignement volontaire présente.
+5. Espacement inter-sections ≥ `--s7` desktop, `--s6` mobile.
+6. Budget accent ≤ 3 en home.
+7. Contraste ≥ 4.5:1 sur toute paire texte / fond, dans les deux portées.
+8. Lisible avec JS désactivé ; navigable au clavier, focus visible.
 9. Vérifié à 375, 768, 1440, 1920.
 
 ---
@@ -911,7 +911,7 @@ classe (`langSwitch`/`langActive`/`langDim`) sans dépendance croisée entre mod
   fonction n'y a pas accès.
 - `canonical` pointe toujours vers l'URL de la locale **courante**.
 - `link rel="alternate" hreflang="fr|en|x-default"` sur les deux — `x-default` pointe
-  vers le français (§ »French stays root»).
+  vers le français — le français reste la racine du site.
 - `og:locale` (`fr_FR`/`en_US`) + `og:locale:alternate` (l'autre).
 - `copy.head.path` est **sans préfixe de langue** (`/`, `/work/zoecare`), identique
   dans `fr` et `en` — `Meta.js` ajoute `/en` lui-même selon la locale active. Le
