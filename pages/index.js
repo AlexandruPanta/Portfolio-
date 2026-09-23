@@ -291,8 +291,7 @@ export default function Home() {
                       <a
                         className={s.contactLink}
                         href={link.href}
-                        rel="noreferrer noopener"
-                        target="_blank"
+                        {...(link.tel ? {} : { rel: 'noreferrer noopener', target: '_blank' })}
                       >
                         {link.label}
                       </a>

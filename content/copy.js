@@ -359,6 +359,7 @@ export const fr = {
     status: 'Disponible — CDI',
     statusStrong: true,
     links: [
+      { label: '+33 7 63 07 77 98', href: 'tel:+33763077798', tel: true },
       { label: 'linkedin.com/in/alexandru-panta', href: 'https://linkedin.com/in/alexandru-panta' },
       { label: 'github.com/AlexandruPanta', href: 'https://github.com/AlexandruPanta' },
     ],
@@ -490,6 +491,7 @@ export const en = {
     status: 'Available — full-time, permanent',
     statusStrong: true,
     links: [
+      { label: '+33 7 63 07 77 98', href: 'tel:+33763077798', tel: true },
       { label: 'linkedin.com/in/alexandru-panta', href: 'https://linkedin.com/in/alexandru-panta' },
       { label: 'github.com/AlexandruPanta', href: 'https://github.com/AlexandruPanta' },
     ],

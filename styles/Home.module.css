@@ -550,6 +550,7 @@
 }
 
 .contactLink {
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-size: var(--t-meta);
   letter-spacing: var(--track-meta);
