@@ -11,13 +11,15 @@
 
 const { test, expect } = require('@playwright/test');
 
+/* Anglais à la racine (defaultLocale), français sous /fr/ — voir
+   next.config.js et DESIGN.md §19. */
 const PAGES = [
   { path: '/', slug: 'home' },
   { path: '/work/zoecare', slug: 'zoecare' },
   { path: '/work/ab-tasty', slug: 'ab-tasty' },
-  { path: '/en', slug: 'home-en' },
-  { path: '/en/work/zoecare', slug: 'zoecare-en' },
-  { path: '/en/work/ab-tasty', slug: 'ab-tasty-en' },
+  { path: '/fr', slug: 'home-fr' },
+  { path: '/fr/work/zoecare', slug: 'zoecare-fr' },
+  { path: '/fr/work/ab-tasty', slug: 'ab-tasty-fr' },
 ];
 
 const WIDTHS = [375, 768, 1440];

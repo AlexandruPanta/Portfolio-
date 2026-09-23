@@ -13,8 +13,10 @@
 const APEX = process.env.APEX || 'alexpanta.dev';
 const WWW = `www.${APEX}`;
 const VERCEL_URL = process.env.VERCEL_URL || 'portfolio-bice-nine-45.vercel.app';
+/* Anglais à la racine (defaultLocale), français sous /fr/ — voir
+   next.config.js et DESIGN.md §19. */
 const PAGES = ['/', '/work/zoecare', '/work/ab-tasty'];
-const EN_PAGES = ['/en', '/en/work/zoecare', '/en/work/ab-tasty'];
+const FR_PAGES = ['/fr', '/fr/work/zoecare', '/fr/work/ab-tasty'];
 
 let failed = false;
 
@@ -104,11 +106,11 @@ await checkVercelUrl();
 await checkMailto();
 for (const path of PAGES) {
   await checkOgImageAbsolute(path);
-  await checkI18n(path, 'fr', 'fr_FR');
-}
-for (const path of EN_PAGES) {
-  await checkOgImageAbsolute(path);
   await checkI18n(path, 'en', 'en_US');
+}
+for (const path of FR_PAGES) {
+  await checkOgImageAbsolute(path);
+  await checkI18n(path, 'fr', 'fr_FR');
 }
 
 console.log();

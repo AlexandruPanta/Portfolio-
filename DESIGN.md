@@ -704,7 +704,7 @@ la ligne reste sur la home, sans lien et sans survol (§11).
 DESIGN.md                      ce document — référence normative
 content/copy.js                chaînes de copie fr + en, même forme — rien de
                                rédactionnel dans le JSX
-next.config.js                 i18n : locales fr/en, defaultLocale fr,
+next.config.js                 i18n : locales fr/en, defaultLocale en,
                                localeDetection false
 components/LangSwitch.js       bascule FR / EN, pointe vers la même page
 styles/tokens.css              tokens, portée inversée, socle éditorial, primitives
@@ -858,12 +858,24 @@ le triplet hreflang et `og:locale` vérifiés sur chacune des 6.
 ## 19 · Version anglaise (i18n)
 
 Routing Next.js Pages Router natif (`next.config.js`) : `locales: ['fr', 'en']`,
-`defaultLocale: 'fr'`, `localeDetection: false`. Le français reste à la racine
-(`/`, `/work/zoecare`), l'anglais sous `/en/` avec les **mêmes slugs**
-(`/en/work/zoecare`) — jamais de slug traduit, une URL partagée reste stable.
+`defaultLocale: 'en'`, `localeDetection: false`. L'anglais reste à la racine
+(`/`, `/work/zoecare`), le français sous `/fr/` avec les **mêmes slugs**
+(`/fr/work/zoecare`) — jamais de slug traduit, une URL partagée reste stable.
 `localeDetection: false` est délibéré : une URL postée sur LinkedIn doit toujours
 rendre la même page, pour le recruteur comme pour le crawler, jamais une redirection
 selon `Accept-Language`.
+
+> **Anglais par défaut, pas français** — révisé après l'étape 0 du chantier i18n.
+> Le fr-par-défaut initial supposait une cible CDI française exclusivement ; la
+> cible s'élargit aux grands comptes et au marché international, où l'anglais est
+> la langue par défaut d'un recruteur technique quelle que soit sa nationalité.
+> Une piste écartée : faire varier la langue selon le fuseau horaire ou la géo du
+> visiteur. Rejetée pour la même raison que `localeDetection: false` — une URL
+> partagée doit toujours rendre la même page, pour n'importe qui, n'importe quand
+> (un recruteur en déplacement ou derrière un VPN verrait une version différente
+> du même lien) — et le fuseau horaire est de toute façon un mauvais indicateur de
+> langue : une bonne partie de l'Europe centrale partage l'heure de Paris sans
+> parler français.
 
 **`content/copy.js`** exporte `fr` et `en`, même forme exacte, un seul fichier — pas
 de dossier `locales/` séparé. Chaque page lit `useRouter().locale` et choisit l'objet :
@@ -910,12 +922,15 @@ classe (`langSwitch`/`langActive`/`langDim`) sans dépendance croisée entre mod
   d'une fonction) pour lire `ctx.locale` dans `getInitialProps` ; un `_document`
   fonction n'y a pas accès.
 - `canonical` pointe toujours vers l'URL de la locale **courante**.
-- `link rel="alternate" hreflang="fr|en|x-default"` sur les deux — `x-default` pointe
-  vers le français — le français reste la racine du site.
+- `link rel="alternate" hreflang="fr|en|x-default"` sur les deux — `x-default` suit
+  `router.defaultLocale` (pas une langue codée en dur dans `Meta.js`) : il pointe
+  vers l'anglais tant que l'anglais est la racine, se réajuste tout seul si la
+  racine change à nouveau.
 - `og:locale` (`fr_FR`/`en_US`) + `og:locale:alternate` (l'autre).
 - `copy.head.path` est **sans préfixe de langue** (`/`, `/work/zoecare`), identique
-  dans `fr` et `en` — `Meta.js` ajoute `/en` lui-même selon la locale active. Le
-  contenu ne connaît pas son propre préfixe d'URL.
+  dans `fr` et `en` — `Meta.js` ajoute le préfixe lui-même (`/fr` pour le français,
+  rien pour l'anglais qui est la racine) selon la locale active. Le contenu ne
+  connaît pas son propre préfixe d'URL.
 
 **OG par langue** — `scripts/make-og.py`, mêmes polices/tracés, cartes `-en` en plus
 des `fr` (`home-en.png`, `zoecare-en.png`, `ab-tasty-en.png`), texte propre à chaque

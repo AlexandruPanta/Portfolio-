@@ -16,7 +16,7 @@ class MyDocument extends Document {
   render() {
     const { locale } = this.props;
     return (
-      <Html lang={locale || 'fr'}>
+      <Html lang={locale || 'en'}>
         <Head>
           <meta charSet="utf-8" />
           {/* Le filet 1px du site, réduit à 32px. */}
