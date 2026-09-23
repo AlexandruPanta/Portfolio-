@@ -114,6 +114,39 @@
   list-style: none;
 }
 
+/* Regroupe la nav de sections et la bascule de langue à droite, sans
+   perturber le space-between à deux colonnes de .nav. */
+.navRight {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s4);
+}
+
+.langSwitch {
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.langActive, .langDim {
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: var(--underline-thickness);
+}
+
+.langActive { color: var(--text); }
+.langDim { color: var(--text-dim); }
+
+.langActive:hover, .langActive:focus-visible,
+.langDim:hover, .langDim:focus-visible {
+  color: var(--text);
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+}
+
 .navLink { white-space: nowrap; }
 
 .navLink {
@@ -394,6 +427,7 @@
   }
 
   .navList { gap: var(--s2); }
+  .navRight { gap: var(--s2); }
   .loaderCount { font-size: var(--t-h3); }
 
   /* L'aperçu image (optionnel) ne doit pas dépendre d'un survol qui

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Meta from '../components/Meta';
+import LangSwitch from '../components/LangSwitch';
 import s from '../styles/Home.module.css';
-import copy from '../content/copy';
+import { fr, en } from '../content/copy';
 import {
   loaderHasAlreadyPlayed,
   markLoaderPlayed,
@@ -12,7 +14,7 @@ import {
 } from '../lib/useSiteMotion';
 
 /* Loader — compteur % en mono. 1.2s au maximum, jamais davantage. */
-function Loader({ onDone }) {
+function Loader({ onDone, copy }) {
   const [count, setCount] = useState(0);
   const barRef = useRef(null);
 
@@ -53,6 +55,9 @@ function Loader({ onDone }) {
 }
 
 export default function Home() {
+  const { locale } = useRouter();
+  const copy = locale === 'en' ? en : fr;
+
   const scopeRef = useRef(null);
   const heroRef = useRef(null);
   const heroPrimedRef = useRef(false);
@@ -114,7 +119,7 @@ export default function Home() {
     <>
       <Meta {...copy.head} />
 
-      {loading && !ready ? <Loader onDone={finishLoader} /> : null}
+      {loading && !ready ? <Loader onDone={finishLoader} copy={copy} /> : null}
 
       <div data-editorial className={s.page} ref={scopeRef}>
         <a className={s.skipLink} href="#top">
@@ -126,17 +131,20 @@ export default function Home() {
           <a className={s.navMark} href="#top">
             {copy.nav.mark}
           </a>
-          <nav aria-label={copy.nav.sectionsLabel}>
-            <ul className={s.navList}>
-              {copy.nav.items.map((item) => (
-                <li key={item.href}>
-                  <a className={s.navLink} href={item.href}>
-                    {item.index} <span className={s.navLabel}>{item.label}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <div className={s.navRight}>
+            <nav aria-label={copy.nav.sectionsLabel}>
+              <ul className={s.navList}>
+                {copy.nav.items.map((item) => (
+                  <li key={item.href}>
+                    <a className={s.navLink} href={item.href}>
+                      {item.index} <span className={s.navLabel}>{item.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <LangSwitch styles={s} />
+          </div>
         </header>
 
         <main id="top">
@@ -213,7 +221,7 @@ export default function Home() {
                           <img
                             className={s.previewImage}
                             src={project.preview}
-                            alt={`Aperçu — ${project.title}`}
+                            alt={`${copy.work.previewAlt} ${project.title}`}
                             width="640"
                             height="400"
                             loading="lazy"

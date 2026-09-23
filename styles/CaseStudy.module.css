@@ -69,6 +69,39 @@
   text-decoration-color: var(--accent);
 }
 
+/* Regroupe le lien retour et la bascule de langue à droite, sans
+   perturber le space-between à deux colonnes de .nav. */
+.navRight {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s4);
+}
+
+.langSwitch {
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.langActive, .langDim {
+  text-decoration: none;
+  text-underline-offset: var(--underline-offset);
+  text-decoration-thickness: var(--underline-thickness);
+}
+
+.langActive { color: var(--text); }
+.langDim { color: var(--text-dim); }
+
+.langActive:hover, .langActive:focus-visible,
+.langDim:hover, .langDim:focus-visible {
+  color: var(--text);
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+}
+
 .skipLink {
   position: absolute;
   left: var(--margin);
@@ -352,4 +385,21 @@
     transform-origin: top center;
   }
   .chainPulse { top: 0; left: 50%; margin-top: 0; margin-left: -3px; }
+
+  /* Sous 768px, le lien retour se réduit à la seule flèche pour laisser
+     la place à la bascule de langue — même traitement que .navLabel
+     sur la home (Home.module.css), le libellé reste le nom accessible
+     du lien. */
+  .navLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .navRight { gap: var(--s2); }
 }

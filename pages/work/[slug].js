@@ -1,11 +1,13 @@
 import { useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Meta from '../../components/Meta';
+import LangSwitch from '../../components/LangSwitch';
 import s from '../../styles/CaseStudy.module.css';
-import copy from '../../content/copy';
+import { fr, en } from '../../content/copy';
 import { useSiteMotion } from '../../lib/useSiteMotion';
 
-const studies = Object.values(copy.caseStudies);
+const copyByLocale = { fr, en };
 
 /* Chaîne d'architecture — une liste ordonnée, pas un dessin.
    L'ordre est porté par le <ol>. Les 4 bords de chaque boîte et les
@@ -37,16 +39,19 @@ function Chain({ steps }) {
 
 /* Emplacement réservé, pas un texte de remplissage : ces phrases
    s'écrivent à la main, elles ne se rédigent pas à la place d'Alex. */
-function Todo({ text }) {
+function Todo({ text, mark }) {
   return (
     <div className={s.todoBlock}>
-      <p className={s.todoMark}>{copy.caseStudy.todoMark}</p>
+      <p className={s.todoMark}>{mark}</p>
       <p className={s.todoText}>{text}</p>
     </div>
   );
 }
 
 export default function CaseStudy({ study }) {
+  const { locale } = useRouter();
+  const copy = copyByLocale[locale] || fr;
+
   const scopeRef = useRef(null);
   /* Pas de loader sur un case study : il n'appartient qu'à l'entrée du
      site. `ready` est donc vrai d'emblée, et seul le hors-écran est
@@ -66,9 +71,12 @@ export default function CaseStudy({ study }) {
           <Link className={s.navMark} href="/">
             {copy.nav.mark}
           </Link>
-          <Link className={s.back} href="/#work">
-            ← {copy.caseStudy.back}
-          </Link>
+          <div className={s.navRight}>
+            <Link className={s.back} href="/#work">
+              ← <span className={s.navLabel}>{copy.caseStudy.back}</span>
+            </Link>
+            <LangSwitch styles={s} />
+          </div>
         </header>
 
         <main id="study">
@@ -125,7 +133,7 @@ export default function CaseStudy({ study }) {
                     </p>
                   ))}
 
-                  {section.todo ? <Todo text={section.todo} /> : null}
+                  {section.todo ? <Todo text={section.todo} mark={copy.caseStudy.todoMark} /> : null}
                 </div>
               </div>
             </section>
@@ -162,13 +170,17 @@ export default function CaseStudy({ study }) {
   );
 }
 
-export function getStaticPaths() {
-  return {
-    paths: studies.map((study) => ({ params: { slug: study.slug } })),
-    fallback: false,
-  };
+export function getStaticPaths({ locales }) {
+  const paths = locales.flatMap((locale) =>
+    Object.values(copyByLocale[locale].caseStudies).map((study) => ({
+      params: { slug: study.slug },
+      locale,
+    }))
+  );
+  return { paths, fallback: false };
 }
 
-export function getStaticProps({ params }) {
+export function getStaticProps({ params, locale }) {
+  const studies = Object.values(copyByLocale[locale].caseStudies);
   return { props: { study: studies.find((study) => study.slug === params.slug) } };
 }

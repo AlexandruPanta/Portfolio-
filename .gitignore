@@ -6,6 +6,9 @@ dist/
 .vercel
 .env*
 
+# venv éphémère de scripts/make-og.py — voir son docstring.
+.venv/
+
 # Playwright — artefacts d'échec (actual/diff/trace), pas les
 # références. tests/visual/__screenshots__/ reste suivi : ce sont les
 # images contre lesquelles on compare.

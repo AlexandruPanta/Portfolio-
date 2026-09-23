@@ -162,6 +162,28 @@ CARDS = [
         foot="Stage · AB Tasty · 2023 → 2024",
         out_name="ab-tasty",
     ),
+    # -- en -----------------------------------------------------------
+    dict(
+        label="(00) — Alex Panta",
+        title="Alex Panta",
+        line="From the embedded sensor to the infrastructure that keeps it running in production.",
+        foot="Paris · 2026",
+        out_name="home-en",
+    ),
+    dict(
+        label="(01) — Case study",
+        title="ZoeCare / ZoeFall",
+        line="IoT fall-detection platform. Deployed and in production in 2 care homes.",
+        foot="Apprenticeship · SATT Paris-Saclay · 2024 → 2026",
+        out_name="zoecare-en",
+    ),
+    dict(
+        label="(02) — Case study",
+        title="AB Tasty — EmotionsAI",
+        line="EmotionsAI tracking tag. Blocking time cut from 120 ms to 53 ms.",
+        foot="Internship · AB Tasty · 2023 → 2024",
+        out_name="ab-tasty-en",
+    ),
 ]
 
 if __name__ == "__main__":

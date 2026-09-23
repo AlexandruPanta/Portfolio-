@@ -702,35 +702,41 @@ la ligne reste sur la home, sans lien et sans survol (§11).
 
 ```
 DESIGN.md                      ce document — référence normative
-content/copy.js                toutes les chaînes de copie, prêtes pour une
-                               version EN — rien de rédactionnel dans le JSX
+content/copy.js                chaînes de copie fr + en, même forme — rien de
+                               rédactionnel dans le JSX
+next.config.js                 i18n : locales fr/en, defaultLocale fr,
+                               localeDetection false
+components/LangSwitch.js       bascule FR / EN, pointe vers la même page
 styles/tokens.css              tokens, portée inversée, socle éditorial, primitives
                                [data-trace] et [data-reveal]
 lib/motion.js                  runtime motion : Lenis, ScrollTrigger, le tracé,
                                les reveals. Chargé en import() différé.
-pages/_document.js             pose la classe `js` avant la peinture, précharge
-                               Satoshi et JetBrains Mono
+pages/_document.js             classe (getInitialProps lit ctx.locale) — lang
+                               dynamique, pose `js` avant la peinture
 pages/index.js                 la home — loader, nav, hero, (01) Selected work
 pages/work/[slug].js           gabarit unique des case studies. getStaticPaths
-                               + getStaticProps, pages prérendues.
-components/Meta.js             balises de partage, communes à toutes les pages
+                               + getStaticProps par locale, pages prérendues.
+components/Meta.js             balises de partage + hreflang/og:locale par langue
 lib/fonts.js                   next/font/local — repli aux métriques ajustées
 lib/useSiteMotion.js           amorçage motion partagé, loader compris
 scripts/check-todo.mjs         garde-fou prebuild contre un trou bloquant publié
-scripts/make-og.py             génère public/og/*.png (texte en tracés)
+scripts/make-og.py             génère public/og/*.png (texte en tracés), fr + en
 scripts/check-reduced-motion.mjs  vérifie prefers-reduced-motion par bascule
                                 réelle (Playwright + Chrome installé)
-scripts/check-prod.mjs         vérification post-déploiement contre les URL
-                               publiques — npm run check:prod
+scripts/check-prod.mjs         vérification post-déploiement — npm run check:prod,
+                               fr + en, hreflang/og:locale compris
 playwright.config.js           régression visuelle — channel Chrome installé
-tests/visual/screenshots.spec.js  3 pages × 3 largeurs, reduced-motion émulé
+tests/visual/screenshots.spec.js  6 pages (3 fr + 3 en) × 3 largeurs, reduced-motion
+                                émulé
 tests/visual/__screenshots__/  références commitées de la régression visuelle
 .githooks/pre-push             build + régression visuelle avant tout push
 styles/CaseStudy.module.css    habillage du template de case study
 styles/Home.module.css         habillage de la home
-pages/styleguide.js            /styleguide — vérification visuelle du système
+pages/styleguide.js            /styleguide — vérification visuelle du système,
+                               fr uniquement (route de contrôle interne)
 styles/Styleguide.module.css   habillage de la route de contrôle
 public/fonts/*.woff2           4 fichiers, 105 kB, subset latin
+public/og/*.png                6 images, 1200×630 — home/zoecare/ab-tasty × fr/en
 ```
 
 **Le verrou sans JavaScript** — `pages/_document.js` pose `class="js"` sur `<html>`
@@ -843,3 +849,92 @@ localhost : apex en 200, `www` en 308 vers l'apex, l'URL `.vercel.app` du CV
 accessible (redirection Vercel suivie), `mailto:` intact et non réécrit par
 Cloudflare, `canonical` et `og:image` en URL absolue sur les 3 pages. Un seul échec
 suffit à sortir en erreur — pensé pour un pipeline, pas pour une lecture en diagonale.
+
+Étendu à l'i18n (§19) : les 3 pages anglaises en plus des 3 françaises, `<html lang>`,
+le triplet hreflang et `og:locale` vérifiés sur chacune des 6.
+
+---
+
+## 19 · Version anglaise (i18n)
+
+Routing Next.js Pages Router natif (`next.config.js`) : `locales: ['fr', 'en']`,
+`defaultLocale: 'fr'`, `localeDetection: false`. Le français reste à la racine
+(`/`, `/work/zoecare`), l'anglais sous `/en/` avec les **mêmes slugs**
+(`/en/work/zoecare`) — jamais de slug traduit, une URL partagée reste stable.
+`localeDetection: false` est délibéré : une URL postée sur LinkedIn doit toujours
+rendre la même page, pour le recruteur comme pour le crawler, jamais une redirection
+selon `Accept-Language`.
+
+**`content/copy.js`** exporte `fr` et `en`, même forme exacte, un seul fichier — pas
+de dossier `locales/` séparé. Chaque page lit `useRouter().locale` et choisit l'objet :
+`const copy = locale === 'en' ? en : fr;` (`pages/index.js`, `pages/work/[slug].js`,
+`components/Meta.js`). `pages/styleguide.js` reste volontairement fr-only : route de
+contrôle interne, pas une page du site.
+
+**Ce qui traduit, ce qui ne traduit pas** — première personne, phrases courtes, même
+ton sec : ce n'est pas une réécriture. Chiffres, unités et flèches identiques
+(`120 ms → 53 ms`, `−56 %`, `2`, `30`, `17`). Noms propres et technos jamais traduits
+(ZoeCare/ZoeFall, AB Tasty, EmotionsAI, SATT Paris-Saclay, Raspberry Pi, WireGuard,
+Row-Level Security…). Les labels structurels (`(01) SELECTED WORK`, `(02) SYSTEM`,
+`Case study`, `Stack`…) sont **déjà en anglais côté fr** — ce ne sont pas de la copie,
+donc identiques dans les deux objets, jamais retraduits. Le footer est inchangé mot
+pour mot entre les deux langues (consigne explicite).
+
+**Casse des labels meta** — `.meta` porte `text-transform: uppercase` en CSS (voir
+§2/§5) : les chaînes source s'écrivent en casse naturelle (`'Care homes equipped ·
+In production'`), jamais en capitales dans `copy.js` — le rendu visuel est identique,
+mais une capitale littérale dans la source romprait la convention établie côté fr et
+désynchroniserait les deux objets pour rien.
+
+**Bascule FR / EN** — `components/LangSwitch.js`, dans la nav de chaque page à
+droite. Mono `--t-meta`, langue active en `--text`, l'autre en `--text-dim` — l'état
+survolé réutilise le même filet `--accent` que `.navLink`/`.back` au repos ailleurs
+sur le site (interaction, pas repos : ne consomme pas le budget des 3 usages, §9).
+Pointe vers la **même page** dans l'autre langue via `router.pathname` + `router.query`
+et le prop `locale` de `next/link` — jamais vers l'accueil. `styles` (le module CSS de
+la page appelante) est passé en prop : Home et CaseStudy portent les mêmes noms de
+classe (`langSwitch`/`langActive`/`langDim`) sans dépendance croisée entre modules.
+
+> Sous 768px, le lien retour d'un case study (`← Back to projects`) se réduisait à
+> l'ajout de la bascule dans une rangée déjà courte : `ALEX PANTA` et le lien
+> repassaient à la ligne à 375px, chose qui n'arrivait pas avant (vérifié contre la
+> prod déployée). Corrigé par le même traitement que `.navLabel` sur la home : le
+> texte du lien retour se réduit à la seule flèche sous 768px, le libellé complet
+> reste le nom accessible du lien (`<span className={s.navLabel}>`). Sans ce filet
+> visuel-hidden, l'ajout d'un troisième élément dans une rangée déjà pleine aurait pu
+> passer inaperçu — l'audit `check-i18n-overflow` mesure `scrollWidth`, pas la
+> lisibilité d'un texte qui s'enroule sur deux lignes.
+
+**SEO par page et par langue** (`components/Meta.js`, `pages/_document.js`) :
+- `<html lang>` dynamique — `pages/_document.js` passe en classe (`Document` au lieu
+  d'une fonction) pour lire `ctx.locale` dans `getInitialProps` ; un `_document`
+  fonction n'y a pas accès.
+- `canonical` pointe toujours vers l'URL de la locale **courante**.
+- `link rel="alternate" hreflang="fr|en|x-default"` sur les deux — `x-default` pointe
+  vers le français (§ »French stays root»).
+- `og:locale` (`fr_FR`/`en_US`) + `og:locale:alternate` (l'autre).
+- `copy.head.path` est **sans préfixe de langue** (`/`, `/work/zoecare`), identique
+  dans `fr` et `en` — `Meta.js` ajoute `/en` lui-même selon la locale active. Le
+  contenu ne connaît pas son propre préfixe d'URL.
+
+**OG par langue** — `scripts/make-og.py`, mêmes polices/tracés, cartes `-en` en plus
+des `fr` (`home-en.png`, `zoecare-en.png`, `ab-tasty-en.png`), texte propre à chaque
+langue (le titre EN passe rarement sur 2 lignes vu la police, vérifié à l'image).
+
+**`getStaticPaths`** (`pages/work/[slug].js`) retourne les deux locales explicitement
+par slug — `locales.flatMap(locale => Object.values(copyByLocale[locale].caseStudies)
+.map(study => ({ params: { slug: study.slug }, locale })))` — 4 pages prérendues au
+total (2 slugs × 2 langues).
+
+**Vérifié** aux 5 largeurs (375, 768, 1024, 1440, 1920) sur les 6 pages (3 fr + 3 en) :
+zéro débordement horizontal (`document.documentElement.scrollWidth`, script ad hoc,
+même méthode que `check-reduced-motion.mjs` — Playwright + Chrome installé, pas
+d'inspection de code). `« Care homes equipped · In production »`, plus long que
+l'équivalent français, a été spécifiquement contrôlé à 375px : il s'enroule proprement
+sur deux lignes, sans dépassement. Aucune nouvelle couleur introduite par ce chantier
+— le risque n'était pas le contraste (déjà couvert par le système de tokens existant)
+mais la longueur des chaînes.
+
+`tests/visual/screenshots.spec.js` couvre désormais 6 pages × 3 largeurs (18 captures,
+au lieu de 9) ; `scripts/check-prod.mjs` vérifie `<html lang>`, le triplet hreflang et
+`og:locale` sur les 3 pages fr et les 3 pages en.

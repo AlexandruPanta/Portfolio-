@@ -15,6 +15,9 @@ const PAGES = [
   { path: '/', slug: 'home' },
   { path: '/work/zoecare', slug: 'zoecare' },
   { path: '/work/ab-tasty', slug: 'ab-tasty' },
+  { path: '/en', slug: 'home-en' },
+  { path: '/en/work/zoecare', slug: 'zoecare-en' },
+  { path: '/en/work/ab-tasty', slug: 'ab-tasty-en' },
 ];
 
 const WIDTHS = [375, 768, 1440];
